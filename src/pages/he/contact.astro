@@ -102,9 +102,7 @@ const expectItems = [
           <div class="rz-side-card">
             <h3 class="rz-side-card-title">משרדים</h3>
             <div class="rz-side-address">
-              כתובת המשרד שורה 1<br />
-              כתובת המשרד שורה 2<br />
-              <span class="rz-side-address-muted">(מציין מיקום)</span>
+              תל אביב, ישראל
             </div>
           </div>
         </div>
@@ -120,6 +118,22 @@ const expectItems = [
     document.querySelectorAll("[data-contact-form]").forEach(function (form) {
       form.addEventListener("submit", function (e) {
         e.preventDefault();
+        if (!form.checkValidity()) {
+          form.reportValidity();
+          return;
+        }
+        var email = form.querySelector('input[type="email"]');
+        var ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(
+          (email && email.value ? email.value : "").trim()
+        );
+        if (email && !ok) {
+          email.setCustomValidity("נא להזין כתובת אימייל תקינה.");
+          email.reportValidity();
+          setTimeout(function () {
+            email.setCustomValidity("");
+          }, 1500);
+          return;
+        }
         var panel = form.closest("[data-demo-panel]");
         if (!panel) return;
         var thankYou = panel.querySelector("[data-thank-you]");

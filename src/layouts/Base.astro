@@ -87,8 +87,17 @@ const bodyFont = lang === "he" ? "'Heebo',sans-serif" : "'DM Sans',sans-serif";
         font-family: var(--bodyFont);
         scroll-behavior: smooth;
       }
-      * {
+      /* Global (unscoped) so inputs/fields in every component size correctly —
+         otherwise content-box + width:100% + padding overflows and columns
+         overlap (e.g. the contact form's two-up rows). */
+      :global(*) {
         box-sizing: border-box;
+      }
+      /* The `hidden` attribute must always win, even over a component's own
+         display rule (e.g. the contact form's thank-you panel is display:flex
+         and would otherwise show on load despite `hidden`). */
+      :global([hidden]) {
+        display: none !important;
       }
       /* Global (unscoped) so every link across pages, footer and components
          matches the design's `a{text-decoration:none}` — not just Base's own

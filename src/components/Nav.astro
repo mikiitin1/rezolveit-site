@@ -45,12 +45,14 @@ const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
       >
       <div class={`rz-panel rz-panel--grid rz-panel--w640 ${anchorClass}`} data-dd-panel="solutions">
         {
-          modules.map((m) => (
-            <a href={localePath(m.path, lang)} class="rz-panel-link">
-              <span class="rz-panel-link-title">{m.title}</span>
-              <span class="rz-panel-link-desc">{t(m.navDesc, lang)}</span>
-            </a>
-          ))
+          modules
+            .filter((m) => m.key !== "ai-assist")
+            .map((m) => (
+              <a href={localePath(m.path, lang)} class="rz-panel-link">
+                <span class="rz-panel-link-title">{m.title}</span>
+                <span class="rz-panel-link-desc">{t(m.navDesc, lang)}</span>
+              </a>
+            ))
         }
       </div>
     </div>
@@ -60,6 +62,12 @@ const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
         >{t(navLabels.platform, lang)} <span class="rz-caret">▾</span></button
       >
       <div class={`rz-panel rz-panel--flex rz-panel--w340 ${anchorClass}`} data-dd-panel="platform">
+        <a href={localePath("ai-assist", lang)} class="rz-panel-link">
+          <span class="rz-panel-link-title">AI Assist</span>
+          <span class="rz-panel-link-desc">
+            {t({ en: "Built-in AI with your own encrypted provider keys", he: "AI מובנה עם מפתחות ספק מוצפנים משלך" }, lang)}
+          </span>
+        </a>
         {
           platformFeatures.map((f) => (
             <a href={platformAnchorHref(lang)} class="rz-panel-link">
