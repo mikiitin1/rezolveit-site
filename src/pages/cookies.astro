@@ -1,0 +1,151 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import type { Locale } from "../lib/nav";
+
+const lang: Locale = "en";
+---
+
+<Base
+  lang={lang}
+  title="RezolveIT — Cookie Policy"
+  description="How and why RezolveIT uses cookies on its website."
+>
+  <div class="rz-page">
+    <Nav lang={lang} altHref="/he/cookies" />
+
+    <header class="rz-legal-hero">
+      <div class="rz-legal-hero-glow"></div>
+      <div data-reveal class="rz-legal-hero-inner">
+        <div class="rz-legal-eyebrow">Cookies</div>
+        <h1 class="rz-legal-h1">Cookie Policy</h1>
+        <p class="rz-legal-sub">How and why we use cookies on our website.</p>
+        <span class="rz-legal-updated">Last updated: July 22, 2026</span>
+      </div>
+    </header>
+
+    <section class="rz-legal-section">
+      <div data-reveal class="rz-legal-panel">
+        <p>This policy explains, in general terms, how RezolveIT uses cookies on our website.</p>
+        <h3>What cookies are</h3>
+        <p>Cookies are small text files stored on your device that help a website function and remember your preferences.</p>
+        <h3>How we use them</h3>
+        <p>
+          We use essential cookies to make the site work, and optional analytics cookies to understand how it is
+          used so we can improve it. When you first visit, you can accept or decline the optional ones.
+        </p>
+        <h3>Managing cookies</h3>
+        <p>
+          You can change your choice at any time by clearing your saved preference, and you can block or delete
+          cookies through your browser settings. Blocking essential cookies may affect how the site works.
+        </p>
+        <h3>Contact</h3>
+        <p>Questions about cookies? Email <a href="mailto:privacy@rezolveit.io">privacy@rezolveit.io</a>.</p>
+        <p class="rz-legal-disclaimer">
+          This document is a general template and is not legal advice. Please have it reviewed by your legal counsel
+          before publication.
+        </p>
+      </div>
+    </section>
+
+    <Footer lang={lang} />
+  </div>
+</Base>
+
+<style>
+  .rz-legal-hero {
+    position: relative;
+    padding: 80px 48px 30px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .rz-legal-hero-glow {
+    position: absolute;
+    left: 50%;
+    top: 34%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 420px;
+    background: radial-gradient(closest-side, rgba(56, 224, 200, 0.12), transparent 72%);
+    pointer-events: none;
+  }
+  .rz-legal-hero-inner {
+    position: relative;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .rz-legal-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(56, 224, 200, 0.35);
+    border-radius: 100px;
+    padding: 7px 16px;
+    font-size: 13.5px;
+    color: var(--accent-strong2);
+  }
+  .rz-legal-h1 {
+    font-family: "Sora", sans-serif;
+    font-size: clamp(34px, 4.4vw, 52px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .rz-legal-sub {
+    max-width: 600px;
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .rz-legal-updated {
+    font-size: 13px;
+    color: var(--muted2);
+  }
+
+  .rz-legal-section {
+    padding: 20px 48px 60px;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .rz-legal-panel {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--panel);
+    padding: 40px 44px;
+  }
+  .rz-legal-panel p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin: 0 0 14px;
+    text-wrap: pretty;
+  }
+  .rz-legal-panel h3 {
+    font-family: "Sora", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 26px 0 8px;
+    color: var(--text);
+  }
+  .rz-legal-panel p.rz-legal-disclaimer {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--muted2);
+    margin: 26px 0 0;
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .rz-legal-panel {
+      padding: 32px 26px;
+    }
+  }
+</style>

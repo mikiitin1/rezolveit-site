@@ -1,0 +1,27 @@
+---
+// Shared feather-style icon renderer. Usage: <Icon name="target" size={26} />
+// See src/lib/icons.ts for the full glyph dictionary (shared by every wave).
+import { ICONS } from "../lib/icons";
+
+export interface Props {
+  name: string;
+  size?: number;
+  color?: string;
+}
+
+const { name, size = 24, color } = Astro.props;
+const inner = ICONS[name] ?? "";
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke={color ?? "currentColor"}
+  stroke-width="1.6"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  style="display:block"
+  set:html={inner}
+/>

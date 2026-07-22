@@ -1,0 +1,1622 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Icon from "../components/Icon.astro";
+import { modules, localePath, type Locale } from "../lib/nav";
+
+const lang: Locale = "en";
+
+const marqueeLogos = [
+  "Your Logo",
+  "Client Two",
+  "Client Three",
+  "Client Four",
+  "Client Five",
+  "Client Six",
+  "Client Seven",
+  "Client Eight",
+];
+
+const toolsetCards = [
+  {
+    title: "Admin Studio",
+    body: "Configure forms, fields, choices, lists and workflows from the UI — no developer required.",
+  },
+  {
+    title: "Dashboards & reports",
+    body: "Configurable report widgets per module — insight without a separate BI project.",
+  },
+  {
+    title: "Secure by design",
+    body: "Row-level security on every record, encrypted keys and a full audit trail, out of the box.",
+  },
+  {
+    title: "Sample data & sandboxes",
+    body: "Spin up a working demo environment instantly — live on day one, not month twelve.",
+  },
+];
+
+const testimonials = [
+  {
+    quote:
+      "We went from signed contract to a live incident queue in four days. Our previous platform took eleven months.",
+    name: "Placeholder Name",
+    role: "IT Director, mid-size manufacturer",
+  },
+  {
+    quote:
+      "Forms, fields and whole workflows change in minutes from the admin UI. Our team stopped filing dev tickets for configuration.",
+    name: "Placeholder Name",
+    role: "CIO, global enterprise",
+  },
+  {
+    quote:
+      "Our PMO finally lives in the same system as our service desk. A demand becomes a project without a single export.",
+    name: "Placeholder Name",
+    role: "PMO Leader, financial services",
+  },
+];
+
+const benefits = [
+  {
+    icon: "bolt",
+    title: "Fast deployment",
+    body: "Metadata-driven setup plus sample data: a working environment on day one.",
+  },
+  {
+    icon: "sliders",
+    title: "Full customization",
+    body: "Forms, fields, lists and dashboards — changed by an admin, not a developer.",
+  },
+  {
+    icon: "sparkle",
+    title: "AI-native",
+    body: "Built-in assistance with your own encrypted keys. Your data stays yours.",
+  },
+  {
+    icon: "lock",
+    title: "Secure by design",
+    body: "Row-level security on every record, encrypted keys and a full audit trail.",
+  },
+];
+---
+
+<Base
+  lang={lang}
+  title="RezolveIT — All your service management, made effortless."
+  description="RezolveIT gives mid-size organizations enterprise-grade capabilities — incidents, changes, portfolios, self-service, AI assistance — at a fraction of the cost and complexity."
+>
+  <div class="rz-page">
+    <Nav lang={lang} altHref="/he/" />
+
+    <!-- HERO -->
+    <header id="top" class="rz-hero">
+      <div class="rz-hero-glow"></div>
+      <div class="rz-hero-inner">
+        <div class="rz-eyebrow">AI-native ESM · Deployable in days</div>
+        <h1 class="rz-h1">
+          All your service management, <span class="rz-gradient-text">made effortless.</span>
+        </h1>
+        <p class="rz-hero-sub">
+          RezolveIT gives mid-size organizations enterprise-grade capabilities — incidents, changes, portfolios,
+          self-service, AI assistance — at a fraction of the cost and complexity.
+        </p>
+        <a href="#demo" class="rz-btn-cta">Book a Demo</a>
+      </div>
+
+      <div data-reveal class="rz-mock rz-mock--hero">
+        <div class="rz-mock-topbar">
+          <span class="rz-dot" style="background:#FF5F57"></span>
+          <span class="rz-dot" style="background:#FEBC2E"></span>
+          <span class="rz-dot" style="background:#28C840"></span>
+          <span class="rz-mock-topbar-label">rezolveit.io — Service Operations</span>
+        </div>
+        <div class="rz-mock-grid3">
+          <div class="rz-mock-nav-col">
+            <div class="rz-mock-nav-item rz-mock-nav-item--active">Incidents</div>
+            <div class="rz-mock-nav-item">Changes</div>
+            <div class="rz-mock-nav-item">Portfolios</div>
+            <div class="rz-mock-nav-item">Roadmap</div>
+            <div class="rz-mock-nav-item">Employee Center</div>
+          </div>
+          <div class="rz-mock-panel">
+            <div class="rz-mock-label">SLA-aware queue</div>
+            <div class="rz-mock-row">
+              <span class="rz-badge rz-badge--p1">P1</span>
+              <span class="rz-mock-row-text">Email service degraded</span>
+              <span class="rz-mock-bar" style="background:linear-gradient(90deg,#FF8484 65%,var(--line2) 65%)"></span>
+            </div>
+            <div class="rz-mock-row">
+              <span class="rz-badge rz-badge--p2">P2</span>
+              <span class="rz-mock-row-text">VPN access — Finance</span>
+              <span class="rz-mock-bar" style="background:linear-gradient(90deg,#FFC46B 40%,var(--line2) 40%)"></span>
+            </div>
+            <div class="rz-mock-row">
+              <span class="rz-badge rz-badge--p3">P3</span>
+              <span class="rz-mock-row-text">Laptop request · new hire</span>
+              <span class="rz-mock-bar" style="background:linear-gradient(90deg,#38E0C8 20%,var(--line2) 20%)"></span>
+            </div>
+          </div>
+          <div class="rz-mock-panel">
+            <div class="rz-mock-label">Portfolio roadmap</div>
+            <div class="rz-mock-roadmap">
+              <div class="rz-mock-roadmap-row">
+                <span class="rz-mock-roadmap-label">ERP move</span>
+                <span class="rz-mock-roadmap-bar" style="background:#38E0C8;width:55%;margin-left:4%"></span>
+              </div>
+              <div class="rz-mock-roadmap-row">
+                <span class="rz-mock-roadmap-label">Portal v2</span>
+                <span class="rz-mock-roadmap-bar" style="background:#5BB8F0;width:38%;margin-left:22%"></span>
+              </div>
+              <div class="rz-mock-roadmap-row">
+                <span class="rz-mock-roadmap-label">SSO rollout</span>
+                <span class="rz-mock-roadmap-bar" style="background:#8A7BF0;width:30%;margin-left:44%"></span>
+              </div>
+            </div>
+            <div class="rz-mock-ai-note">
+              <span>✦</span>
+              <span>AI: 3 demands ready to promote to projects</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- LOGO MARQUEE -->
+    <section class="rz-marquee-section">
+      <div class="rz-marquee-caption">Trusted by service teams at</div>
+      <div class="rz-marquee-track">
+        {[...marqueeLogos, ...marqueeLogos].map((logo) => <span class="rz-marquee-logo">{logo}</span>)}
+      </div>
+    </section>
+
+    <!-- PLATFORM ROWS -->
+    <section class="rz-rows-section">
+      <div class="rz-rows-glow"></div>
+      <div data-reveal class="rz-rows-heading">
+        <div class="rz-rows-mark">R</div>
+        <h2 class="rz-h2">One platform for the whole service lifecycle</h2>
+      </div>
+
+      <div class="rz-rows">
+        <div id="resolve" data-reveal class="rz-row">
+          <div class="rz-row-text">
+            <div class="rz-row-eyebrow">Resolve · ITSM</div>
+            <h3 class="rz-h3">Run IT as a service, start to finish</h3>
+            <p class="rz-row-body">
+              Incident, Problem and Change management with full lifecycle states, priority matrices and SLA-aware
+              queues. A service catalog with fulfillment workflows, a searchable knowledge base, and a CMDB that
+              links every record to the services it touches.
+            </p>
+          </div>
+          <div class="rz-mock rz-mock--row">
+            <div class="rz-mock-label">Change · CHG-1042</div>
+            <div class="rz-mock-steps">
+              <span class="rz-step rz-step--done">Draft</span>
+              <span class="rz-step rz-step--done">Assess</span>
+              <span class="rz-step rz-step--active">Approve</span>
+              <span class="rz-step">Implement</span>
+              <span class="rz-step">Review</span>
+            </div>
+            <div class="rz-mock-two-col">
+              <div class="rz-mock-mini">
+                <div class="rz-mock-mini-label">Impact × Urgency</div>
+                <div class="rz-mock-mini-value" style="color:#FFC46B">High · P2</div>
+              </div>
+              <div class="rz-mock-mini">
+                <div class="rz-mock-mini-label">Linked CI</div>
+                <div class="rz-mock-mini-value">exchange-prod-01</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="plan" data-reveal class="rz-row rz-row--reverse">
+          <div class="rz-row-text">
+            <div class="rz-row-eyebrow">Plan · EPM</div>
+            <h3 class="rz-h3">From idea to roadmap, one hierarchy</h3>
+            <p class="rz-row-body">
+              Capture ideas, score demands and promote them to projects. Plan on an interactive Gantt with
+              milestones and dependencies, prioritize with WSJF and MoSCoW, balance capacity by hours or FTE, and
+              tie it all to measurable goals and OKRs.
+            </p>
+          </div>
+          <div class="rz-mock rz-mock--row">
+            <div class="rz-mock-label">Roadmap · Q3–Q4</div>
+            <div class="rz-mock-gantt">
+              <div class="rz-mock-gantt-row">
+                <span class="rz-mock-gantt-label">Cloud migration</span>
+                <div class="rz-mock-gantt-track">
+                  <span class="rz-mock-gantt-bar" style="left:2%;width:48%;background:linear-gradient(90deg,#38E0C8,#2BB8A6)"></span>
+                  <span class="rz-mock-gantt-diamond"></span>
+                </div>
+              </div>
+              <div class="rz-mock-gantt-row">
+                <span class="rz-mock-gantt-label">Self-service v2</span>
+                <div class="rz-mock-gantt-track">
+                  <span class="rz-mock-gantt-bar" style="left:28%;width:42%;background:#5BB8F0"></span>
+                </div>
+              </div>
+              <div class="rz-mock-gantt-row">
+                <span class="rz-mock-gantt-label">ITAM rollout</span>
+                <div class="rz-mock-gantt-track">
+                  <span class="rz-mock-gantt-bar" style="left:55%;width:38%;background:#8A7BF0"></span>
+                </div>
+              </div>
+            </div>
+            <div class="rz-mock-three-col">
+              <div class="rz-mock-mini">
+                <div class="rz-mock-mini-label">WSJF score</div>
+                <div class="rz-mock-mini-value" style="color:var(--accent-strong)">21.4</div>
+              </div>
+              <div class="rz-mock-mini">
+                <div class="rz-mock-mini-label">Capacity</div>
+                <div class="rz-mock-mini-value">82% FTE</div>
+              </div>
+              <div class="rz-mock-mini">
+                <div class="rz-mock-mini-label">OKR</div>
+                <div class="rz-mock-mini-value" style="color:#FFC46B">On track</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="serve" data-reveal class="rz-row">
+          <div class="rz-row-text">
+            <div class="rz-row-eyebrow">Serve · Employee Service Center</div>
+            <h3 class="rz-h3">A portal your employees actually use</h3>
+            <p class="rz-row-body">
+              A branded, mobile-friendly self-service portal: browse the catalog, submit requests, track tickets,
+              search knowledge. Forms, categories and branding are fully admin-customizable — no code, no
+              consultants.
+            </p>
+          </div>
+          <div class="rz-mock rz-mock--row">
+            <div class="rz-mock-search"><span>⌕</span><span>How can we help you today?</span></div>
+            <div class="rz-mock-tile-grid">
+              <div class="rz-mock-tile">
+                <div class="rz-mock-tile-icon"><Icon name="laptop" size={20} /></div>
+                <div class="rz-mock-tile-label">Request hardware</div>
+              </div>
+              <div class="rz-mock-tile">
+                <div class="rz-mock-tile-icon"><Icon name="key" size={20} /></div>
+                <div class="rz-mock-tile-label">Access & accounts</div>
+              </div>
+              <div class="rz-mock-tile">
+                <div class="rz-mock-tile-icon"><Icon name="doc" size={20} /></div>
+                <div class="rz-mock-tile-label">Knowledge base</div>
+              </div>
+              <div class="rz-mock-tile rz-mock-tile--active">
+                <div class="rz-mock-tile-icon rz-mock-tile-icon--active"><Icon name="ticket" size={20} /></div>
+                <div class="rz-mock-tile-label rz-mock-tile-label--active">My tickets (2)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="assist" data-reveal class="rz-row rz-row--reverse">
+          <div class="rz-row-text">
+            <div class="rz-row-eyebrow">Assist · Built-in AI</div>
+            <h3 class="rz-h3">AI-native, powered by your own keys</h3>
+            <p class="rz-row-body">
+              Summarization, drafting and deflection across the platform. Bring your own models — OpenAI, Anthropic
+              or others — and switch, mix and manage them per organization right from the admin UI, with guardrails
+              you control.
+            </p>
+          </div>
+          <div class="rz-mock rz-mock--row">
+            <div class="rz-mock-ai-msg">
+              <span class="rz-mock-ai-avatar">✦</span>
+              <div class="rz-mock-ai-bubble">
+                Summary: 4 similar incidents this week point to the same storage CI. Suggest opening a Problem
+                record and linking INC-2201…2204.
+              </div>
+            </div>
+            <div class="rz-mock-vault">
+              <div>
+                <div class="rz-mock-vault-label">Provider key vault</div>
+                <div class="rz-mock-vault-value">🔒 Encrypted · RLS-locked · Your DB</div>
+              </div>
+              <span class="rz-mock-vault-pill">Anthropic ✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLATFORM INFOGRAPHIC -->
+    <section id="platform" class="rz-infographic">
+      <div class="rz-infographic-glow"></div>
+      <div data-reveal class="rz-infographic-heading">
+        <h2 class="rz-h2">One platform. One metadata engine.</h2>
+        <p class="rz-infographic-sub">
+          Every module reads and writes the same data model — click any module to explore it in detail.
+        </p>
+      </div>
+
+      <div data-reveal class="rz-hub">
+        <div class="rz-hub-ring rz-hub-ring--outer"></div>
+        <div class="rz-hub-ring rz-hub-ring--inner"></div>
+        <div class="rz-hub-center">
+          <div class="rz-hub-center-mark">R</div>
+          <div class="rz-hub-center-title">Metadata engine</div>
+          <div class="rz-hub-center-desc">Tables, forms, workflows &amp; RLS security — all data, not code</div>
+        </div>
+        {
+          modules.map((m) => (
+            <a href={localePath(m.path, lang)} class="rz-hub-node" style={`left:${m.hubPos.x};top:${m.hubPos.y}`}>
+              <span class="rz-hub-node-icon">
+                <Icon name={m.icon} size={22} />
+              </span>
+              <span class="rz-hub-node-title">{m.title}</span>
+              {m.full && <span class="rz-hub-node-full">{m.full}</span>}
+              <span class="rz-hub-node-blurb">{m.hubBlurb.en}</span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div data-reveal class="rz-toolset">
+        <h3 class="rz-h3-center">A platform, not just a toolset</h3>
+        <p class="rz-toolset-sub">
+          Underneath every module sits one metadata-driven engine. Tables, columns, choice lists, form sections and
+          list views are all <span class="rz-strong">data, not code</span> — so admins reshape the platform from the
+          UI, and every record is protected by Postgres row-level security. Built on a modern open stack: Next.js
+          and Supabase, fully auditable, no proprietary black box.
+        </p>
+        <div class="rz-toolset-grid">
+          {
+            toolsetCards.map((c) => (
+              <div class="rz-toolset-card">
+                <div class="rz-toolset-card-title">{c.title}</div>
+                <div class="rz-toolset-card-body">{c.body}</div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ONE PLATFORM CARDS -->
+    <section class="rz-cards-section">
+      <h2 data-reveal class="rz-h2-center">Everything connects on one data model</h2>
+      <p data-reveal class="rz-cards-sub">
+        A demand becomes a project. An incident links to a CI. A portal request follows a catalog workflow. One
+        metadata engine underneath it all.
+      </p>
+      <div class="rz-cards-grid">
+        {
+          modules.map((m) => (
+            <a data-reveal href={localePath(m.path, lang)} class="rz-module-card">
+              <div class="rz-module-card-icon">
+                <Icon name={m.icon} size={26} />
+              </div>
+              <h3 class="rz-module-card-title">{m.title}</h3>
+              <div class="rz-module-card-full">{m.full}</div>
+              <p class="rz-module-card-body">{m.cardBody.en}</p>
+              <span class="rz-module-card-cta">Explore →</span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="rz-testimonials-section" data-testimonials>
+      <div class="rz-testimonials-glow"></div>
+      <div class="rz-testimonials-inner">
+        <div class="rz-testimonials-viewport">
+          <div class="rz-testimonials-track" data-testimonial-track>
+            {
+              testimonials.map((tm) => (
+                <div class="rz-testimonial-slide">
+                  <div class="rz-testimonial-card">
+                    <p class="rz-testimonial-quote">&ldquo;{tm.quote}&rdquo;</p>
+                    <div class="rz-testimonial-name">{tm.name}</div>
+                    <div class="rz-testimonial-role">{tm.role}</div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+        <div class="rz-testimonial-controls">
+          <button class="rz-carousel-btn" data-testimonial-prev aria-label="Previous testimonial">←</button>
+          <button class="rz-carousel-btn" data-testimonial-next aria-label="Next testimonial">→</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY BENEFITS -->
+    <section class="rz-benefits-section">
+      <h2 data-reveal class="rz-h2-center">Why teams pick RezolveIT</h2>
+      <div class="rz-benefits-grid">
+        {
+          benefits.map((b) => (
+            <div data-reveal class="rz-benefit">
+              <div class="rz-benefit-icon">
+                <Icon name={b.icon} size={24} />
+              </div>
+              <h3 class="rz-benefit-title">{b.title}</h3>
+              <p class="rz-benefit-body">{b.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="rz-pricing-section">
+      <div data-reveal class="rz-pricing-heading">
+        <div class="rz-pricing-eyebrow">Pricing</div>
+        <h2 class="rz-h2">Simple pricing, no per-module games</h2>
+        <p class="rz-pricing-sub">
+          Start on the cloud in minutes, or run it entirely on your own infrastructure. One price, every module
+          included.
+        </p>
+      </div>
+      <div class="rz-pricing-grid">
+        <div data-reveal class="rz-pricing-card">
+          <a href="https://github.com" target="_blank" rel="noopener" title="View on GitHub" class="rz-github-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:block">
+              <path
+                d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.36 9.36 0 015 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.04 10.04 0 0022 12.25C22 6.58 17.52 2 12 2z"
+              ></path>
+            </svg>
+          </a>
+          <div class="rz-pricing-title">Open Source</div>
+          <p class="rz-pricing-desc">Everything you need to get started. Live in minutes with sample data included.</p>
+          <div class="rz-pricing-price"><span class="rz-price-num">$0</span><span class="rz-price-unit">Free</span></div>
+          <a href={localePath("contact", lang)} class="rz-btn-outline">Get started free</a>
+          <div class="rz-pricing-features">
+            <div class="rz-feature"><span class="rz-check">✓</span><span>All modules — ITSM, EPM, HR, CMDB, ITAM, Security Ops, AIOps</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Employee Center &amp; built-in AI Assist</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Automatic updates &amp; managed backups</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Email support</span></div>
+          </div>
+        </div>
+
+        <div data-reveal class="rz-pricing-card rz-pricing-card--featured">
+          <div class="rz-pricing-title">Enterprise</div>
+          <p class="rz-pricing-desc">Self-hosted or private cloud, with the controls large organizations need.</p>
+          <div class="rz-pricing-price"><span class="rz-price-num">Contact us</span></div>
+          <div class="rz-pricing-note">Custom plan for your organization</div>
+          <a href={localePath("contact", lang)} class="rz-btn-solid">Talk to sales</a>
+          <div class="rz-pricing-features">
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Everything in OSS</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>AI Enterprise Features — <a href="#" class="rz-underline-link">Docs</a></span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Self-hosted or single-tenant private cloud</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>SSO / SAML, custom roles &amp; row-level security</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>SLA, priority support &amp; onboarding assistance</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section id="demo" class="rz-final-cta-section">
+      <div data-reveal class="rz-final-cta">
+        <div class="rz-final-cta-glow"></div>
+        <h2 class="rz-h2-cta">See Rezolve<span class="rz-accent-text">IT</span> live in minutes</h2>
+        <p class="rz-final-cta-sub">
+          A working environment on day one — sample data included. No army of implementation consultants required.
+        </p>
+        <a href="mailto:demo@rezolveit.io" class="rz-btn-cta">Book a Demo</a>
+      </div>
+    </section>
+
+    <Footer lang={lang} />
+  </div>
+</Base>
+
+<style>
+  .rz-accent-text {
+    color: var(--rz-accent);
+  }
+  .rz-strong {
+    color: var(--text2);
+  }
+
+  /* ---- typography helpers ---- */
+  .rz-h1 {
+    font-family: "Sora", sans-serif;
+    font-size: clamp(44px, 6vw, 78px);
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .rz-gradient-text {
+    background: linear-gradient(100deg, #38e0c8, #5bb8f0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .rz-h2 {
+    font-family: "Sora", sans-serif;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .rz-h2-center {
+    font-family: "Sora", sans-serif;
+    font-size: clamp(32px, 4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0 0 18px;
+    text-align: center;
+    text-wrap: balance;
+  }
+  .rz-h3 {
+    font-family: "Sora", sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+  }
+  .rz-h3-center {
+    font-family: "Sora", sans-serif;
+    font-size: clamp(24px, 3vw, 34px);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0 0 14px;
+    text-align: center;
+    text-wrap: balance;
+  }
+  .rz-h2-cta {
+    position: relative;
+    font-family: "Sora", sans-serif;
+    font-size: clamp(32px, 4.4vw, 52px);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  /* ---- hero ---- */
+  .rz-hero {
+    position: relative;
+    padding: 130px 48px 110px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .rz-hero-glow {
+    position: absolute;
+    left: 50%;
+    top: 38%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 600px;
+    background: radial-gradient(closest-side, rgba(56, 224, 200, 0.16), rgba(27, 155, 216, 0.07) 55%, transparent 75%);
+    animation: rz-glow 9s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .rz-hero-inner {
+    position: relative;
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+  }
+  .rz-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(56, 224, 200, 0.35);
+    border-radius: 100px;
+    padding: 7px 16px;
+    font-size: 13.5px;
+    color: var(--accent-strong2);
+    letter-spacing: 0.02em;
+  }
+  .rz-hero-sub {
+    max-width: 680px;
+    margin: 0;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+  .rz-btn-cta {
+    background: var(--rz-accent);
+    color: #06121a;
+    font-weight: 600;
+    font-size: 17px;
+    padding: 15px 34px;
+    border-radius: 12px;
+    display: inline-block;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+  .rz-btn-cta:hover {
+    color: #06121a;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(56, 224, 200, 0.4);
+  }
+
+  /* ---- product mocks ---- */
+  .rz-mock {
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    background: var(--panel);
+    padding: 22px;
+    box-shadow: 0 24px 70px var(--shadow3);
+  }
+  .rz-mock--hero {
+    position: relative;
+    max-width: 980px;
+    margin: 80px auto 0;
+    border-radius: 18px;
+    background: linear-gradient(180deg, var(--panel), var(--panel-deep));
+    box-shadow: 0 40px 120px var(--shadow), 0 0 80px rgba(56, 224, 200, 0.07);
+    padding: 22px 26px;
+    text-align: left;
+  }
+  .rz-mock-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .rz-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+  }
+  .rz-mock-topbar-label {
+    margin-left: 14px;
+    font-size: 13px;
+    color: var(--muted2);
+  }
+  .rz-mock-grid3 {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    gap: 16px;
+  }
+  .rz-mock-nav-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .rz-mock-nav-item {
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: #7b7f94;
+    font-size: 13.5px;
+  }
+  .rz-mock-nav-item--active {
+    background: rgba(56, 224, 200, 0.12);
+    color: var(--accent-strong);
+    font-weight: 600;
+  }
+  .rz-mock-panel {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rz-mock-label {
+    font-size: 12px;
+    color: var(--muted2);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .rz-mock-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background: var(--inset);
+  }
+  .rz-mock-row-text {
+    font-size: 13.5px;
+    color: var(--text2);
+  }
+  .rz-mock-bar {
+    margin-left: auto;
+    width: 52px;
+    height: 5px;
+    border-radius: 3px;
+  }
+  .rz-badge {
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 5px;
+    padding: 2px 7px;
+  }
+  .rz-badge--p1 {
+    color: #ff8484;
+    border: 1px solid rgba(255, 132, 132, 0.4);
+  }
+  .rz-badge--p2 {
+    color: #ffc46b;
+    border: 1px solid rgba(255, 196, 107, 0.4);
+  }
+  .rz-badge--p3 {
+    color: var(--accent-strong);
+    border: 1px solid rgba(56, 224, 200, 0.4);
+  }
+  .rz-mock-roadmap {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .rz-mock-roadmap-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rz-mock-roadmap-label {
+    font-size: 12.5px;
+    color: var(--muted);
+    width: 70px;
+    flex-shrink: 0;
+  }
+  .rz-mock-roadmap-bar {
+    height: 9px;
+    border-radius: 5px;
+    display: block;
+  }
+  .rz-mock-ai-note {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(56, 224, 200, 0.08);
+    border: 1px solid rgba(56, 224, 200, 0.2);
+    font-size: 12.5px;
+    color: var(--accent-strong2);
+  }
+
+  /* ---- marquee ---- */
+  .rz-marquee-section {
+    border-top: 1px solid var(--border0);
+    border-bottom: 1px solid var(--border0);
+    padding: 34px 0;
+    overflow: hidden;
+  }
+  .rz-marquee-caption {
+    text-align: center;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 26px;
+  }
+  .rz-marquee-track {
+    display: flex;
+    width: max-content;
+    gap: 72px;
+    animation: rz-marquee 28s linear infinite;
+    align-items: center;
+  }
+  .rz-marquee-logo {
+    font-family: "Sora", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--muted3);
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+  }
+
+  /* ---- platform rows ---- */
+  .rz-rows-section {
+    position: relative;
+    padding: 90px 48px 40px;
+    overflow: hidden;
+  }
+  .rz-rows-glow {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    transform: translate(-50%, -50%);
+    width: 1100px;
+    height: 500px;
+    background: radial-gradient(closest-side, rgba(27, 155, 216, 0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .rz-rows-heading {
+    position: relative;
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 30px;
+  }
+  .rz-rows-mark {
+    display: inline-flex;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #38e0c8, #1b9bd8);
+    align-items: center;
+    justify-content: center;
+    color: #06121a;
+    font-family: "Sora", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .rz-rows {
+    max-width: 1160px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  .rz-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 48px;
+    padding: 44px 0;
+  }
+  .rz-row--reverse {
+    flex-wrap: wrap-reverse;
+    flex-direction: row-reverse;
+  }
+  .rz-row-text {
+    flex: 1 1 380px;
+    min-width: 320px;
+  }
+  .rz-row-eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rz-accent);
+    margin-bottom: 12px;
+  }
+  .rz-row-body {
+    font-size: 16.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    margin: 0;
+  }
+  .rz-mock--row {
+    flex: 1 1 420px;
+    min-width: 320px;
+  }
+  .rz-mock-steps {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .rz-step {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    padding: 7px 4px;
+    border-radius: 7px;
+    background: var(--inset);
+    color: var(--muted2);
+  }
+  .rz-step--done {
+    background: rgba(56, 224, 200, 0.14);
+    color: var(--accent-strong);
+  }
+  .rz-step--active {
+    background: var(--rz-accent);
+    color: #06121a;
+    font-weight: 600;
+  }
+  .rz-mock-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .rz-mock-three-col {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .rz-mock-three-col .rz-mock-mini {
+    flex: 1;
+  }
+  .rz-mock-mini {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .rz-mock-mini-label {
+    font-size: 11.5px;
+    color: var(--muted2);
+    margin-bottom: 4px;
+  }
+  .rz-mock-mini-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text2);
+  }
+  .rz-mock-gantt {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .rz-mock-gantt-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .rz-mock-gantt-label {
+    font-size: 12.5px;
+    color: var(--muted);
+    width: 96px;
+    flex-shrink: 0;
+  }
+  .rz-mock-gantt-track {
+    flex: 1;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--inset);
+    position: relative;
+  }
+  .rz-mock-gantt-bar {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    border-radius: 4px;
+  }
+  .rz-mock-gantt-diamond {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: var(--text);
+  }
+  .rz-mock-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 11px 14px;
+    margin-bottom: 16px;
+    color: var(--muted2);
+    font-size: 14px;
+  }
+  .rz-mock-tile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .rz-mock-tile {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .rz-mock-tile--active {
+    border: 1px solid rgba(56, 224, 200, 0.3);
+    background: rgba(56, 224, 200, 0.06);
+  }
+  .rz-mock-tile-icon {
+    color: #38e0c8;
+    margin-bottom: 8px;
+  }
+  .rz-mock-tile-icon--active {
+    color: var(--accent-strong);
+  }
+  .rz-mock-tile-label {
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  .rz-mock-tile-label--active {
+    color: var(--accent-strong);
+  }
+  .rz-mock-ai-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .rz-mock-ai-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #38e0c8, #1b9bd8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .rz-mock-ai-bubble {
+    background: var(--inset);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text2);
+  }
+  .rz-mock-vault {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid rgba(56, 224, 200, 0.25);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: rgba(56, 224, 200, 0.05);
+  }
+  .rz-mock-vault-label {
+    font-size: 12px;
+    color: var(--muted2);
+    margin-bottom: 2px;
+  }
+  .rz-mock-vault-value {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--accent-strong);
+  }
+  .rz-mock-vault-pill {
+    font-size: 12px;
+    color: var(--muted);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 4px 9px;
+  }
+
+  /* ---- infographic ---- */
+  .rz-infographic {
+    position: relative;
+    padding: 100px 48px 60px;
+    overflow: hidden;
+  }
+  .rz-infographic-glow {
+    position: absolute;
+    left: 50%;
+    top: 55%;
+    transform: translate(-50%, -50%);
+    width: 1000px;
+    height: 700px;
+    background: radial-gradient(closest-side, rgba(56, 224, 200, 0.1), transparent 70%);
+    pointer-events: none;
+  }
+  .rz-infographic-heading {
+    position: relative;
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 90px;
+  }
+  .rz-infographic-heading .rz-h2 {
+    margin: 0 0 16px;
+  }
+  .rz-infographic-sub {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+  }
+  .rz-hub {
+    position: relative;
+    width: 1000px;
+    height: 680px;
+    margin: 0 auto;
+    max-width: 100%;
+  }
+  .rz-hub-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+  }
+  .rz-hub-ring--outer {
+    width: 560px;
+    height: 560px;
+    border: 1px dashed rgba(56, 224, 200, 0.25);
+  }
+  .rz-hub-ring--inner {
+    width: 380px;
+    height: 380px;
+    border: 1px dashed var(--border);
+  }
+  .rz-hub-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+  }
+  .rz-hub-center-mark {
+    width: 96px;
+    height: 96px;
+    border-radius: 26px;
+    background: linear-gradient(135deg, #38e0c8, #1b9bd8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #06121a;
+    font-family: "Sora", sans-serif;
+    font-weight: 700;
+    font-size: 44px;
+    box-shadow: 0 0 60px rgba(56, 224, 200, 0.35);
+  }
+  .rz-hub-center-title {
+    font-family: "Sora", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .rz-hub-center-desc {
+    font-size: 12.5px;
+    color: var(--muted2);
+    max-width: 170px;
+  }
+  .rz-hub-node {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 190px;
+    padding: 16px 14px;
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    background: var(--panel);
+    text-align: center;
+    color: var(--text);
+    transition:
+      transform 0.2s,
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .rz-hub-node:hover {
+    transform: translate(-50%, -52%);
+    border-color: rgba(56, 224, 200, 0.5);
+    box-shadow: 0 12px 40px rgba(56, 224, 200, 0.15);
+    color: var(--text);
+  }
+  .rz-hub-node-icon {
+    font-size: 22px;
+    color: var(--rz-accent);
+  }
+  .rz-hub-node-title {
+    font-family: "Sora", sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+  }
+  .rz-hub-node-full {
+    font-size: 10.5px;
+    color: var(--muted2);
+    margin-top: -2px;
+  }
+  .rz-hub-node-blurb {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .rz-toolset {
+    position: relative;
+    max-width: 980px;
+    margin: 80px auto 0;
+    text-align: center;
+  }
+  .rz-toolset-sub {
+    font-size: 16.5px;
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: 720px;
+    margin: 0 auto 40px;
+    text-wrap: pretty;
+  }
+  .rz-toolset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    text-align: left;
+  }
+  .rz-toolset-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    background: var(--card-bg);
+  }
+  .rz-toolset-card-title {
+    font-family: "Sora", sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+    margin-bottom: 6px;
+    color: #38e0c8;
+  }
+  .rz-toolset-card-body {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  /* ---- module cards grid ---- */
+  .rz-cards-section {
+    padding: 90px 48px;
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+  .rz-cards-sub {
+    text-align: center;
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto 56px;
+    line-height: 1.6;
+  }
+  .rz-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .rz-module-card {
+    display: block;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px 26px;
+    background: linear-gradient(180deg, var(--card-bg2), rgba(255, 255, 255, 0));
+    transition:
+      transform 0.2s,
+      border-color 0.2s;
+    color: var(--text);
+  }
+  .rz-module-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(56, 224, 200, 0.35);
+    color: var(--text);
+  }
+  .rz-module-card-icon {
+    margin-bottom: 16px;
+    color: var(--rz-accent);
+  }
+  .rz-module-card-title {
+    font-family: "Sora", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .rz-module-card-full {
+    font-size: 12px;
+    color: var(--muted2);
+    margin: 0 0 12px;
+    min-height: 1em;
+  }
+  .rz-module-card-body {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  .rz-module-card-cta {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--rz-accent);
+  }
+
+  /* ---- testimonials ---- */
+  .rz-testimonials-section {
+    padding: 80px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .rz-testimonials-glow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 500px;
+    background: radial-gradient(closest-side, rgba(56, 224, 200, 0.08), transparent 70%);
+    pointer-events: none;
+  }
+  .rz-testimonials-inner {
+    position: relative;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .rz-testimonials-viewport {
+    overflow: hidden;
+    border-radius: 18px;
+  }
+  .rz-testimonials-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .rz-testimonial-slide {
+    flex: 0 0 100%;
+    padding: 2px;
+  }
+  .rz-testimonial-card {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--panel);
+    padding: 44px 48px;
+    text-align: center;
+  }
+  .rz-testimonial-quote {
+    font-family: "Sora", sans-serif;
+    font-size: 22px;
+    line-height: 1.5;
+    font-weight: 500;
+    margin: 0 0 26px;
+    text-wrap: pretty;
+  }
+  .rz-testimonial-name {
+    font-weight: 600;
+    font-size: 15.5px;
+  }
+  .rz-testimonial-role {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  .rz-testimonial-controls {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 26px;
+  }
+  .rz-carousel-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: none;
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .rz-carousel-btn:hover {
+    border-color: rgba(56, 224, 200, 0.5);
+    color: #38e0c8;
+  }
+
+  /* ---- benefits ---- */
+  .rz-benefits-section {
+    padding: 80px 48px 100px;
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+  .rz-benefits-section .rz-h2-center {
+    margin-bottom: 52px;
+  }
+  .rz-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 36px;
+    text-align: center;
+  }
+  .rz-benefit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .rz-benefit-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    border: 1px solid rgba(56, 224, 200, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--rz-accent);
+  }
+  .rz-benefit-title {
+    font-family: "Sora", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .rz-benefit-body {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0;
+    max-width: 250px;
+  }
+
+  /* ---- pricing ---- */
+  .rz-pricing-section {
+    padding: 40px 48px 90px;
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+  .rz-pricing-heading {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 52px;
+  }
+  .rz-pricing-eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rz-accent);
+    margin-bottom: 14px;
+  }
+  .rz-pricing-heading .rz-h2 {
+    margin: 0 0 16px;
+  }
+  .rz-pricing-sub {
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+  }
+  .rz-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  .rz-pricing-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    background: var(--card-bg);
+  }
+  .rz-pricing-card--featured {
+    border: 1px solid rgba(56, 224, 200, 0.5);
+    background: linear-gradient(180deg, rgba(56, 224, 200, 0.06), var(--card-bg));
+    box-shadow: 0 24px 70px rgba(56, 224, 200, 0.1);
+  }
+  .rz-github-btn {
+    position: absolute;
+    top: 24px;
+    right: 28px;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+  }
+  .rz-github-btn:hover {
+    border-color: rgba(56, 224, 200, 0.5);
+    color: #38e0c8;
+  }
+  .rz-pricing-title {
+    font-family: "Sora", sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .rz-pricing-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0 0 20px;
+  }
+  .rz-pricing-price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .rz-pricing-card--featured .rz-pricing-price {
+    margin-bottom: 4px;
+  }
+  .rz-price-num {
+    font-family: "Sora", sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .rz-price-unit {
+    font-size: 15px;
+    color: var(--muted);
+  }
+  .rz-pricing-note {
+    font-size: 13px;
+    color: var(--muted2);
+    margin-bottom: 24px;
+  }
+  .rz-btn-outline {
+    display: block;
+    text-align: center;
+    border: 1px solid var(--border2);
+    border-radius: 11px;
+    padding: 13px;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 26px;
+  }
+  .rz-btn-outline:hover {
+    border-color: rgba(56, 224, 200, 0.5);
+    color: #38e0c8;
+  }
+  .rz-btn-solid {
+    display: block;
+    text-align: center;
+    background: var(--rz-accent);
+    border-radius: 11px;
+    padding: 13px;
+    font-weight: 600;
+    font-size: 15px;
+    color: #06121a;
+    margin-bottom: 26px;
+  }
+  .rz-btn-solid:hover {
+    color: #06121a;
+    box-shadow: 0 10px 32px rgba(56, 224, 200, 0.4);
+  }
+  .rz-pricing-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .rz-feature {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14px;
+    color: var(--text3);
+    line-height: 1.5;
+  }
+  .rz-check {
+    color: #38e0c8;
+    flex-shrink: 0;
+  }
+  .rz-underline-link {
+    text-decoration: underline;
+  }
+
+  /* ---- final CTA ---- */
+  .rz-final-cta-section {
+    padding: 0 48px 90px;
+  }
+  .rz-final-cta {
+    position: relative;
+    max-width: 1060px;
+    margin: 0 auto;
+    border: 1px solid rgba(56, 224, 200, 0.25);
+    border-radius: 24px;
+    padding: 80px 48px;
+    text-align: center;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--cta1), var(--cta2));
+  }
+  .rz-final-cta-glow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 400px;
+    background: radial-gradient(closest-side, rgba(56, 224, 200, 0.18), transparent 70%);
+    pointer-events: none;
+  }
+  .rz-final-cta-sub {
+    position: relative;
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto 34px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    .rz-mock-grid3 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,305 @@
+---
+// Footer box + cookie consent banner, shared by every page.
+import {
+  modules,
+  companyLinks,
+  legalLinks,
+  footerBlurb,
+  footerAddress,
+  copyright,
+  cookieBanner,
+  localePath,
+  homeHref,
+  t,
+  type Locale,
+} from "../lib/nav";
+
+export interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const home = homeHref(lang);
+---
+
+<footer class="rz-footer">
+  <div class="rz-footer-box">
+    <div class="rz-footer-cols">
+      <div class="rz-footer-brand">
+        <div class="rz-footer-logo">
+          <span class="rz-footer-logo-mark">R</span>
+          <span>Rezolve<span class="rz-accent-text">IT</span></span>
+        </div>
+        <p class="rz-footer-blurb">{t(footerBlurb, lang)}</p>
+        <div class="rz-footer-social">
+          <a href="https://github.com" target="_blank" rel="noopener" title="GitHub" class="rz-social-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:block">
+              <path
+                d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.84 9.73.5.09.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.63.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.36 9.36 0 015 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.04 10.04 0 0022 12.25C22 6.58 17.52 2 12 2z"
+              ></path>
+            </svg>
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener" title="LinkedIn" class="rz-social-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:block">
+              <path
+                d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 110-4.14 2.07 2.07 0 010 4.14zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"
+              ></path>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="rz-footer-col">
+        <div class="rz-footer-heading">{lang === "he" ? "פלטפורמה" : "Platform"}</div>
+        {
+          modules.map((m) => (
+            <a href={localePath(m.path, lang)} class="rz-footer-link">
+              {m.footerLabel}
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="rz-footer-col">
+        <div class="rz-footer-heading">{lang === "he" ? "משאבים" : "Resources"}</div>
+        <a href={`${home}#pricing`} class="rz-footer-link">{lang === "he" ? "תמחור" : "Pricing"}</a>
+        <a href="#" class="rz-footer-link">{lang === "he" ? "בלוג" : "Blog"}</a>
+        <a href="https://docs.rezolveit.io" target="_blank" rel="noopener" class="rz-footer-link"
+          >{lang === "he" ? "תיעוד" : "Docs"}</a
+        >
+      </div>
+
+      <div class="rz-footer-col rz-footer-col--wide">
+        <div class="rz-footer-heading">{lang === "he" ? "החברה" : "Company"}</div>
+        {
+          companyLinks.map((c) => (
+            <a href={localePath(c.path, lang)} class="rz-footer-link">
+              {t(c.title, lang)}
+            </a>
+          ))
+        }
+        <div class="rz-footer-address">
+          {footerAddress[lang].map((line) => <div>{line}</div>)}
+        </div>
+      </div>
+    </div>
+
+    <div class="rz-footer-bottom">
+      <div class="rz-footer-copy">{t(copyright, lang)}</div>
+      <div class="rz-footer-legal">
+        {
+          legalLinks.map((l) => (
+            <a href={localePath(l.path, lang)} class="rz-footer-legal-link">
+              {t(l.title, lang)}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div class="rz-cookie-wrap" data-cookie-banner style="display:flex">
+  <div class="rz-cookie-box">
+    <p class="rz-cookie-text">
+      {t(cookieBanner.text, lang)}
+      {" "}
+      <a href={localePath("cookies", lang)}>{t(legalLinks[2].title, lang)}</a>
+    </p>
+    <div class="rz-cookie-actions">
+      <button class="rz-cookie-decline" data-cookie-decline>{t(cookieBanner.decline, lang)}</button>
+      <button class="rz-cookie-accept" data-cookie-accept>{t(cookieBanner.accept, lang)}</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .rz-footer {
+    padding: 20px 24px 40px;
+  }
+  .rz-footer-box {
+    max-width: 1200px;
+    margin: 0 auto;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: var(--panel);
+    padding: 48px 48px 36px;
+  }
+  .rz-footer-cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 56px;
+    justify-content: space-between;
+  }
+  .rz-footer-brand {
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .rz-footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Sora", "Heebo", sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .rz-footer-logo-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #38e0c8, #1b9bd8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #06121a;
+    font-size: 14px;
+  }
+  .rz-accent-text {
+    color: var(--rz-accent);
+  }
+  .rz-footer-blurb {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--muted2);
+    margin: 0;
+  }
+  .rz-footer-social {
+    display: flex;
+    gap: 12px;
+  }
+  .rz-social-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+  }
+  .rz-social-btn:hover {
+    border-color: rgba(56, 224, 200, 0.5);
+    color: #38e0c8;
+  }
+  .rz-footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 150px;
+  }
+  .rz-footer-col--wide {
+    min-width: 180px;
+  }
+  .rz-footer-heading {
+    font-size: 12.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted2);
+    margin-bottom: 4px;
+  }
+  .rz-footer-link {
+    color: var(--text3);
+    font-size: 14.5px;
+  }
+  .rz-footer-link:hover {
+    color: #38e0c8;
+  }
+  .rz-footer-address {
+    font-size: 13px;
+    color: var(--muted2);
+    line-height: 1.6;
+    margin-top: 8px;
+  }
+  .rz-footer-bottom {
+    margin: 40px 0 0;
+    padding-top: 24px;
+    border-top: 1px solid var(--border0);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .rz-footer-copy {
+    font-size: 13px;
+    color: var(--muted2);
+  }
+  .rz-footer-legal {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+  .rz-footer-legal-link {
+    color: var(--muted2);
+    font-size: 13px;
+  }
+  .rz-footer-legal-link:hover {
+    color: var(--muted);
+  }
+
+  .rz-cookie-wrap {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 24px;
+    z-index: 300;
+    justify-content: center;
+    padding: 0 24px;
+    pointer-events: none;
+  }
+  .rz-cookie-box {
+    pointer-events: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    max-width: 860px;
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--border2);
+    border-radius: 14px;
+    padding: 18px 22px;
+    box-shadow: 0 24px 70px var(--shadow);
+  }
+  .rz-cookie-text {
+    flex: 1 1 320px;
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text3);
+  }
+  .rz-cookie-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .rz-cookie-decline {
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--text3);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+  .rz-cookie-decline:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+  .rz-cookie-accept {
+    background: #38e0c8;
+    border: none;
+    color: #06121a;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+  .rz-cookie-accept:hover {
+    box-shadow: 0 6px 20px rgba(56, 224, 200, 0.35);
+  }
+</style>

@@ -1,0 +1,331 @@
+---
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import { localePath, type Locale } from "../../lib/nav";
+
+const lang: Locale = "he";
+
+const stats = [
+  { value: "1", label: "פלטפורמה, מודל נתונים אחד" },
+  { value: "Days", label: "עד סביבה עובדת" },
+  { value: "0", label: "מפתחים נדרשים להתאמה" },
+  { value: "100%", label: "המפתחות שלכם, הנתונים שלכם" },
+];
+
+const beliefs = [
+  {
+    title: "ימים, לא חודשים",
+    body: "תוכנה צריכה להוכיח את ערכה כבר בשבוע הראשון. נתוני דוגמה, ברירות מחדל הגיוניות והקמה מבוססת מטא-דאטה מאפשרות זאת.",
+  },
+  {
+    title: "מנהלים במקום יועצים",
+    body: "כל טופס, שדה, רשימה ותהליך הם נתונים — ניתנים לשינוי מהממשק בידי מי שמפעיל את הפלטפורמה, לא בחיוב לפי שעה.",
+  },
+  {
+    title: "הנתונים שלכם נשארים שלכם",
+    body: "ה-AI רץ עם מפתחות ספק מוצפנים משלכם, במסד הנתונים שלכם. סטאק פתוח וניתן לביקורת — ללא קופסה שחורה קניינית.",
+  },
+  {
+    title: "פלטפורמה אחת, הכול מחובר",
+    body: "דרישה הופכת לפרויקט. תקלה מתקשרת ל-CI. עובד חדש מקבל מחשב נייד. מודל נתונים אחד פירושו ששום דבר לא נופל בין המערכות.",
+  },
+];
+
+const leadership = [
+  { initials: "FN", name: "שם המייסד", role: 'מייסד שותף ומנכ"ל' },
+  { initials: "FN", name: "שם המייסד", role: 'מייסד שותף וסמנכ"ל טכנולוגיות' },
+  { initials: "EN", name: "שם המנהל", role: 'סמנכ"ל מוצר' },
+];
+---
+
+<Base
+  lang={lang}
+  title="אודות — RezolveIT"
+  description="הקמנו את RezolveIT כי ארגונים בינוניים ראויים לניהול שירות אמיתי — ללא הטמעות שנמשכות שנה, צבאות יועצים או תג מחיר של אנטרפרייז. פלטפורמה אחת מבוססת מטא-דאטה, פעילה תוך ימים."
+>
+  <div class="rz-page">
+    <Nav lang={lang} altHref="/about" />
+
+    <!-- HERO -->
+    <header class="rz-about-hero">
+      <div class="rz-about-hero-glow"></div>
+      <div class="rz-about-hero-inner">
+        <div class="rz-eyebrow">אודות RezolveIT</div>
+        <h1 class="rz-about-h1">תוכנת אנטרפרייז לא צריכה להרגיש כמו פרויקט בנייה</h1>
+        <p class="rz-about-hero-sub">
+          הקמנו את RezolveIT כי ארגונים בינוניים ראויים לניהול שירות אמיתי — ללא הטמעות שנמשכות שנה, צבאות יועצים
+          או תג מחיר של אנטרפרייז. פלטפורמה אחת מבוססת מטא-דאטה, פעילה תוך ימים.
+        </p>
+      </div>
+    </header>
+
+    <!-- STATS -->
+    <section class="rz-about-stats-section">
+      <div data-reveal class="rz-about-stats">
+        {
+          stats.map((s) => (
+            <div class="rz-about-stat">
+              <div class="rz-about-stat-value">{s.value}</div>
+              <div class="rz-about-stat-label">{s.label}</div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- WHAT WE BELIEVE -->
+    <section class="rz-about-beliefs-section">
+      <h2 data-reveal class="rz-h2-center">במה אנו מאמינים</h2>
+      <div class="rz-about-beliefs-grid">
+        {
+          beliefs.map((b) => (
+            <div data-reveal class="rz-about-belief-card">
+              <h3 class="rz-about-belief-title">{b.title}</h3>
+              <p class="rz-about-belief-body">{b.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- LEADERSHIP -->
+    <section class="rz-about-leadership-section">
+      <h2 data-reveal class="rz-h2-center">הנהלה</h2>
+      <div class="rz-about-leadership-grid">
+        {
+          leadership.map((p) => (
+            <div data-reveal class="rz-about-person-card">
+              <div class="rz-about-person-avatar">{p.initials}</div>
+              <div class="rz-about-person-name">{p.name}</div>
+              <div class="rz-about-person-role">{p.role}</div>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="rz-about-cta-section">
+      <div data-reveal class="rz-about-cta">
+        <h2 class="rz-about-cta-h2">בואו לראות מה אנחנו בונים</h2>
+        <p class="rz-about-cta-sub">סביבה חיה תוך דקות — לא מצגות.</p>
+        <a href={localePath("contact", lang)} class="rz-btn-cta">הזמנת דמו</a>
+      </div>
+    </section>
+
+    <Footer lang={lang} />
+  </div>
+</Base>
+
+<style>
+  .rz-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(56, 224, 200, 0.35);
+    border-radius: 100px;
+    padding: 7px 16px;
+    font-size: 13.5px;
+    color: var(--accent-strong2);
+    letter-spacing: 0.02em;
+  }
+  .rz-h2-center {
+    font-family: "Heebo", sans-serif;
+    font-size: clamp(28px, 3.4vw, 40px);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0 0 40px;
+    text-align: center;
+    text-wrap: balance;
+  }
+  .rz-btn-cta {
+    background: var(--rz-accent);
+    color: #06121a;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    display: inline-block;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+  .rz-btn-cta:hover {
+    color: #06121a;
+    box-shadow: 0 12px 40px rgba(56, 224, 200, 0.4);
+  }
+
+  /* ---- hero ---- */
+  .rz-about-hero {
+    position: relative;
+    padding: 100px 48px 70px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .rz-about-hero-glow {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 500px;
+    background: radial-gradient(closest-side, rgba(56, 224, 200, 0.14), transparent 72%);
+    pointer-events: none;
+  }
+  .rz-about-hero-inner {
+    position: relative;
+    max-width: 820px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+  }
+  .rz-about-h1 {
+    font-family: "Heebo", sans-serif;
+    font-size: clamp(38px, 5vw, 62px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .rz-about-hero-sub {
+    max-width: 660px;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* ---- stats ---- */
+  .rz-about-stats-section {
+    padding: 20px 48px 60px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .rz-about-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    text-align: center;
+  }
+  .rz-about-stat {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 20px;
+  }
+  .rz-about-stat-value {
+    font-family: "Heebo", sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--rz-accent);
+  }
+  .rz-about-stat-label {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ---- what we believe ---- */
+  .rz-about-beliefs-section {
+    padding: 60px 48px;
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+  .rz-about-beliefs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .rz-about-belief-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    background: var(--card-bg);
+  }
+  .rz-about-belief-title {
+    font-family: "Heebo", sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0 0 10px;
+    color: var(--rz-accent);
+  }
+  .rz-about-belief-body {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* ---- leadership ---- */
+  .rz-about-leadership-section {
+    padding: 60px 48px 90px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .rz-about-leadership-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+  }
+  .rz-about-person-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    background: var(--card-bg);
+  }
+  .rz-about-person-avatar {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, rgba(56, 224, 200, 0.25), rgba(27, 155, 216, 0.25));
+    border: 1px solid rgba(56, 224, 200, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Heebo", sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--rz-accent);
+  }
+  .rz-about-person-name {
+    font-weight: 600;
+    font-size: 16.5px;
+  }
+  .rz-about-person-role {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* ---- CTA ---- */
+  .rz-about-cta-section {
+    padding: 0 48px 100px;
+  }
+  .rz-about-cta {
+    max-width: 900px;
+    margin: 0 auto;
+    border: 1px solid rgba(56, 224, 200, 0.25);
+    border-radius: 22px;
+    padding: 56px 48px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--cta1), var(--cta2));
+  }
+  .rz-about-cta-h2 {
+    font-family: "Heebo", sans-serif;
+    font-size: clamp(26px, 3.4vw, 38px);
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+  .rz-about-cta-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin: 0 0 28px;
+  }
+</style>

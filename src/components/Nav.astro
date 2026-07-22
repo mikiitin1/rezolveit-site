@@ -1,0 +1,341 @@
+---
+// Fixed pill nav shared by every page. See PATTERN NOTES for wave-2 usage.
+import {
+  modules,
+  platformFeatures,
+  resourcesLinks,
+  companyLinks,
+  navLabels,
+  bookDemoLabel,
+  themeToggleTitle,
+  localePath,
+  homeHref,
+  platformAnchorHref,
+  t,
+  type Locale,
+} from "../lib/nav";
+
+export interface Props {
+  lang: Locale;
+  /**
+   * Href of this page's counterpart in the other language. Defaults to the
+   * homepage counterpart. Wave-2 pages MUST pass their own, e.g. an EN page
+   * at /itsm passes altHref="/he/itsm"; the HE twin passes altHref="/itsm".
+   */
+  altHref?: string;
+}
+
+const { lang, altHref } = Astro.props;
+const isHe = lang === "he";
+const altTarget = altHref ?? (isHe ? "/" : "/he/");
+const home = homeHref(lang);
+const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
+---
+
+<nav class="rz-nav">
+  <a href={home} class="rz-logo">
+    <span class="rz-logo-mark">R</span>
+    <span>Rezolve<span class="rz-accent-text">IT</span></span>
+  </a>
+
+  <div class="rz-nav-links" data-nav-links>
+    <div class="rz-dd">
+      <button class="rz-trigger" data-dd="solutions"
+        >{t(navLabels.solutions, lang)} <span class="rz-caret">▾</span></button
+      >
+      <div class={`rz-panel rz-panel--grid rz-panel--w640 ${anchorClass}`} data-dd-panel="solutions">
+        {
+          modules.map((m) => (
+            <a href={localePath(m.path, lang)} class="rz-panel-link">
+              <span class="rz-panel-link-title">{m.title}</span>
+              <span class="rz-panel-link-desc">{t(m.navDesc, lang)}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="rz-dd">
+      <button class="rz-trigger" data-dd="platform"
+        >{t(navLabels.platform, lang)} <span class="rz-caret">▾</span></button
+      >
+      <div class={`rz-panel rz-panel--flex rz-panel--w340 ${anchorClass}`} data-dd-panel="platform">
+        {
+          platformFeatures.map((f) => (
+            <a href={platformAnchorHref(lang)} class="rz-panel-link">
+              <span class="rz-panel-link-title">{t(f.title, lang)}</span>
+              <span class="rz-panel-link-desc">{t(f.desc, lang)}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="rz-dd">
+      <button class="rz-trigger" data-dd="resources"
+        >{t(navLabels.resources, lang)} <span class="rz-caret">▾</span></button
+      >
+      <div class={`rz-panel rz-panel--flex rz-panel--w300 ${anchorClass}`} data-dd-panel="resources">
+        {
+          resourcesLinks.map((r) => (
+            <a
+              href={r.href}
+              target={r.external ? "_blank" : undefined}
+              rel={r.external ? "noopener" : undefined}
+              class="rz-panel-link"
+            >
+              <span class="rz-panel-link-title">{t(r.title, lang)}</span>
+              <span class="rz-panel-link-desc">{t(r.desc, lang)}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <a href={`${home}#pricing`} class="rz-simple-link">{t(navLabels.pricing, lang)}</a>
+
+    <div class="rz-dd">
+      <button class="rz-trigger" data-dd="company"
+        >{t(navLabels.company, lang)} <span class="rz-caret">▾</span></button
+      >
+      <div class={`rz-panel rz-panel--flex rz-panel--w300 ${anchorClass}`} data-dd-panel="company">
+        {
+          companyLinks.map((c) => (
+            <a href={localePath(c.path, lang)} class="rz-panel-link">
+              <span class="rz-panel-link-title">{t(c.title, lang)}</span>
+              <span class="rz-panel-link-desc">{t(c.desc, lang)}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="rz-nav-actions">
+    <a href={altTarget} class="rz-lang-btn" title={isHe ? "Switch to English" : "עברית"}>
+      {isHe ? "EN" : "עברית"}
+    </a>
+    <button class="rz-theme-btn" data-theme-toggle title={t(themeToggleTitle, lang)}>
+      <span data-theme-icon>☀</span>
+    </button>
+    <a href={localePath("contact", lang)} class="rz-demo-btn">{t(bookDemoLabel, lang)}</a>
+  </div>
+</nav>
+<div class="rz-nav-spacer"></div>
+
+<style>
+  .rz-nav {
+    position: fixed;
+    top: 16px;
+    left: 24px;
+    right: 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 0 22px;
+    height: 72px;
+    background: var(--nav-bg);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px var(--shadow3);
+  }
+  .rz-nav-spacer {
+    height: 88px;
+  }
+  .rz-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+    font-family: "Sora", "Heebo", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+  .rz-logo-mark {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #38e0c8, #1b9bd8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #06121a;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .rz-accent-text {
+    color: var(--rz-accent);
+  }
+  .rz-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 15px;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+  .rz-dd {
+    position: relative;
+  }
+  .rz-trigger {
+    background: none;
+    border: none;
+    color: var(--text3);
+    font: inherit;
+    font-size: 14.5px;
+    padding: 9px 9px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .rz-trigger:hover {
+    color: #38e0c8;
+  }
+  .rz-caret {
+    font-size: 10px;
+    opacity: 0.6;
+  }
+  .rz-simple-link {
+    color: var(--text3);
+    font-size: 14.5px;
+    padding: 9px 9px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .rz-simple-link:hover {
+    color: #38e0c8;
+  }
+  .rz-panel {
+    display: none;
+    position: absolute;
+    top: 100%;
+    padding: 10px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 24px 60px var(--shadow2);
+    gap: 2px;
+    z-index: 200;
+  }
+  .rz-panel.rz-open.rz-panel--grid {
+    display: grid;
+  }
+  .rz-panel.rz-open.rz-panel--flex {
+    display: flex;
+    flex-direction: column;
+  }
+  .rz-panel--grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .rz-panel--w640 {
+    width: 640px;
+  }
+  .rz-panel--w340 {
+    width: 340px;
+  }
+  .rz-panel--w300 {
+    width: 300px;
+  }
+  .rz-anchor-start {
+    left: 0;
+  }
+  .rz-anchor-end {
+    right: 0;
+  }
+  .rz-panel-link {
+    display: block;
+    padding: 12px 14px;
+    border-radius: 10px;
+    color: var(--text);
+  }
+  .rz-panel-link:hover {
+    background: rgba(56, 224, 200, 0.08);
+    color: var(--text);
+  }
+  .rz-panel-link-title {
+    font-weight: 600;
+    display: block;
+  }
+  .rz-panel-link-desc {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .rz-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .rz-lang-btn {
+    height: 40px;
+    flex-shrink: 0;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    background: none;
+    color: var(--text3);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+  }
+  .rz-lang-btn:hover {
+    border-color: rgba(56, 224, 200, 0.5);
+    color: #38e0c8;
+  }
+  .rz-theme-btn {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    background: none;
+    color: var(--text3);
+    font-size: 17px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rz-theme-btn:hover {
+    border-color: rgba(56, 224, 200, 0.5);
+    color: #38e0c8;
+  }
+  .rz-demo-btn {
+    background: var(--rz-accent);
+    color: #06121a;
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    white-space: nowrap;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+  .rz-demo-btn:hover {
+    color: #06121a;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(56, 224, 200, 0.35);
+  }
+
+  @media (max-width: 900px) {
+    .rz-nav-links {
+      display: none;
+    }
+  }
+</style>

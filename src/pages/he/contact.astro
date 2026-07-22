@@ -1,0 +1,362 @@
+---
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import { type Locale } from "../../lib/nav";
+
+const lang: Locale = "he";
+
+const expectItems = [
+  "סיור חי של 30 דקות במודולים שחשובים לכם",
+  "סביבת ניסוי עם נתוני דוגמה, שלכם לתמיד",
+  "תוכנית פריסה שנמדדת בימים, לא בחודשים",
+];
+---
+
+<Base
+  lang={lang}
+  title="הזמנת דמו — RezolveIT"
+  description="ספרו לנו מעט על הארגון שלכם ונחזור אליכם תוך יום עסקים אחד עם סיור חי המותאם לכם."
+>
+  <div class="rz-page">
+    <Nav lang={lang} altHref="/contact" />
+
+    <!-- HERO -->
+    <header class="rz-contact-hero">
+      <div class="rz-contact-hero-glow"></div>
+      <div class="rz-contact-hero-inner">
+        <div class="rz-eyebrow">הזמנת דמו</div>
+        <h1 class="rz-contact-h1">ראו את Rezolve<span class="rz-accent-text">IT</span> בפעולה תוך דקות</h1>
+        <p class="rz-contact-hero-sub">
+          ספרו לנו מעט על הארגון שלכם ונחזור אליכם תוך יום עסקים אחד עם סיור חי המותאם לכם.
+        </p>
+      </div>
+    </header>
+
+    <!-- FORM + SIDE CARDS -->
+    <section id="demo" class="rz-contact-form-section">
+      <div class="rz-contact-grid">
+        <div class="rz-contact-panel" data-demo-panel>
+          <form class="rz-contact-form" data-contact-form>
+            <div class="rz-form-row">
+              <div class="rz-form-field">
+                <label for="rz-name">שם מלא</label>
+                <input id="rz-name" name="name" type="text" placeholder="Emma Carter" required />
+              </div>
+              <div class="rz-form-field">
+                <label for="rz-email">אימייל בעבודה</label>
+                <input id="rz-email" name="email" type="email" placeholder="dana@company.com" required />
+              </div>
+            </div>
+            <div class="rz-form-row">
+              <div class="rz-form-field">
+                <label for="rz-company">חברה</label>
+                <input id="rz-company" name="company" type="text" placeholder="שם החברה" required />
+              </div>
+              <div class="rz-form-field">
+                <label for="rz-size">גודל החברה</label>
+                <input id="rz-size" name="size" type="text" placeholder="לדוגמה, 500 עובדים" />
+              </div>
+            </div>
+            <div class="rz-form-field">
+              <label for="rz-message">מה תרצו לראות?</label>
+              <textarea
+                id="rz-message"
+                name="message"
+                rows="4"
+                placeholder="ITSM, ניהול תיקים, פורטל העובדים…"></textarea>
+            </div>
+            <button type="submit" class="rz-btn-cta rz-form-submit">הזמנת דמו</button>
+          </form>
+
+          <div class="rz-thank-you" data-thank-you hidden>
+            <div class="rz-thank-you-icon">✓</div>
+            <h3 class="rz-thank-you-title">תודה! הבקשה שלכם התקבלה.</h3>
+            <p class="rz-thank-you-body">נחזור אליכם תוך יום עסקים אחד לתיאום הסיור.</p>
+          </div>
+        </div>
+
+        <div class="rz-contact-side">
+          <div class="rz-side-card">
+            <h3 class="rz-side-card-title">למה לצפות</h3>
+            <div class="rz-expect-list">
+              {
+                expectItems.map((item, i) => (
+                  <div class="rz-expect-item">
+                    <span class="rz-expect-num">{i + 1}</span>
+                    <span>{item}</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+
+          <div class="rz-side-card">
+            <h3 class="rz-side-card-title">כתבו לנו</h3>
+            <div class="rz-side-links">
+              <a href="mailto:demo@rezolveit.io">demo@rezolveit.io</a>
+              <a href="mailto:support@rezolveit.io">support@rezolveit.io</a>
+            </div>
+          </div>
+
+          <div class="rz-side-card">
+            <h3 class="rz-side-card-title">משרדים</h3>
+            <div class="rz-side-address">
+              כתובת המשרד שורה 1<br />
+              כתובת המשרד שורה 2<br />
+              <span class="rz-side-address-muted">(מציין מיקום)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <Footer lang={lang} />
+  </div>
+</Base>
+
+<script is:inline>
+  (function () {
+    document.querySelectorAll("[data-contact-form]").forEach(function (form) {
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var panel = form.closest("[data-demo-panel]");
+        if (!panel) return;
+        var thankYou = panel.querySelector("[data-thank-you]");
+        form.hidden = true;
+        if (thankYou) thankYou.hidden = false;
+      });
+    });
+  })();
+</script>
+
+<style>
+  .rz-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(56, 224, 200, 0.35);
+    border-radius: 100px;
+    padding: 7px 16px;
+    font-size: 13.5px;
+    color: var(--accent-strong2);
+    letter-spacing: 0.02em;
+  }
+  .rz-accent-text {
+    color: var(--rz-accent);
+  }
+  .rz-btn-cta {
+    background: var(--rz-accent);
+    color: #06121a;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+    font-family: inherit;
+    transition:
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+  .rz-btn-cta:hover {
+    color: #06121a;
+    box-shadow: 0 10px 32px rgba(56, 224, 200, 0.4);
+  }
+
+  /* ---- hero ---- */
+  .rz-contact-hero {
+    position: relative;
+    padding: 90px 48px 50px;
+    text-align: center;
+    overflow: hidden;
+  }
+  .rz-contact-hero-glow {
+    position: absolute;
+    left: 50%;
+    top: 30%;
+    transform: translate(-50%, -50%);
+    width: 900px;
+    height: 500px;
+    background: radial-gradient(closest-side, rgba(56, 224, 200, 0.14), transparent 72%);
+    pointer-events: none;
+  }
+  .rz-contact-hero-inner {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .rz-contact-h1 {
+    font-family: "Heebo", sans-serif;
+    font-size: clamp(38px, 5vw, 60px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .rz-contact-hero-sub {
+    max-width: 620px;
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--muted);
+    text-wrap: pretty;
+  }
+
+  /* ---- form + side cards ---- */
+  .rz-contact-form-section {
+    padding: 20px 48px 100px;
+  }
+  .rz-contact-grid {
+    max-width: 1060px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: stretch;
+  }
+  .rz-contact-panel {
+    flex: 1.4 1 420px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--panel);
+    padding: 36px;
+  }
+  .rz-contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .rz-form-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .rz-form-field {
+    flex: 1 1 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .rz-form-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text3);
+  }
+  .rz-form-field input,
+  .rz-form-field textarea {
+    width: 100%;
+    background: var(--inset);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 13px 15px;
+    color: var(--text);
+    font-family: "Heebo", sans-serif;
+    font-size: 14.5px;
+    outline: none;
+  }
+  .rz-form-field input:focus,
+  .rz-form-field textarea:focus {
+    border-color: rgba(56, 224, 200, 0.6);
+  }
+  .rz-form-field input::placeholder,
+  .rz-form-field textarea::placeholder {
+    color: var(--muted2);
+  }
+  .rz-form-field textarea {
+    resize: vertical;
+    font-family: "Heebo", sans-serif;
+  }
+  .rz-form-submit {
+    align-self: flex-start;
+  }
+
+  .rz-thank-you {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    min-height: 320px;
+  }
+  .rz-thank-you-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 1px solid rgba(56, 224, 200, 0.4);
+    background: rgba(56, 224, 200, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--rz-accent);
+    font-size: 28px;
+  }
+  .rz-thank-you-title {
+    font-family: "Heebo", sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .rz-thank-you-body {
+    font-size: 15px;
+    color: var(--muted);
+    margin: 0;
+    max-width: 380px;
+  }
+
+  .rz-contact-side {
+    flex: 1 1 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .rz-side-card {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px;
+    background: var(--card-bg);
+  }
+  .rz-side-card-title {
+    font-family: "Heebo", sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 14px;
+  }
+  .rz-expect-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .rz-expect-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .rz-expect-num {
+    color: var(--rz-accent);
+    font-weight: 700;
+  }
+  .rz-side-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14.5px;
+  }
+  .rz-side-address {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+  .rz-side-address-muted {
+    color: var(--muted2);
+  }
+</style>

@@ -1,0 +1,271 @@
+---
+// Shared shell for every RezolveIT page (wave 1 + wave 2).
+// See PATTERN NOTES (Wave-1 report) for how to use this in a new page.
+export interface Props {
+  lang: "en" | "he";
+  title: string;
+  description: string;
+}
+
+const { lang, title, description } = Astro.props;
+const dir = lang === "he" ? "rtl" : "ltr";
+const bodyFont = lang === "he" ? "'Heebo',sans-serif" : "'DM Sans',sans-serif";
+---
+
+<!DOCTYPE html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    {
+      lang === "he" ? (
+        <link
+          href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      ) : (
+        <link
+          href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+          rel="stylesheet"
+        />
+      )
+    }
+
+    <script src="/theme.js" is:inline></script>
+
+    <style define:vars={{ bodyFont }}>
+      /* ---------------------------------------------------------------
+       * Dark-theme token defaults, set explicitly on :root. theme.js
+       * overwrites this same set of custom properties when light mode
+       * is active (auto 07:00–19:00, or a saved user choice). Component
+       * styles read these vars directly — no per-element fallbacks needed.
+       * ------------------------------------------------------------- */
+      :root {
+        --bg: #0a0a14;
+        --panel: #12121f;
+        --panel-deep: #0d0d18;
+        --inset: #171726;
+        --cta1: #101020;
+        --cta2: #0c0c18;
+
+        --text: #f2f3f7;
+        --text2: #d6d8e4;
+        --text3: #c9ccda;
+        --muted: #9ca0b3;
+        --muted2: #6b6f84;
+        --muted3: #575b70;
+        --line2: #2a2a3c;
+
+        --border0: rgba(255, 255, 255, 0.06);
+        --border: rgba(255, 255, 255, 0.08);
+        --border2: rgba(255, 255, 255, 0.15);
+        --card-bg: rgba(255, 255, 255, 0.02);
+        --card-bg2: rgba(255, 255, 255, 0.03);
+
+        --nav-bg: rgba(10, 10, 20, 0.82);
+        --shadow: rgba(0, 0, 0, 0.6);
+        --shadow2: rgba(0, 0, 0, 0.55);
+        --shadow3: rgba(0, 0, 0, 0.45);
+
+        --rz-accent: #38e0c8;
+        --accent-strong: #8feadc;
+        --accent-strong2: #9ee9dd;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--bodyFont);
+        scroll-behavior: smooth;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      a {
+        color: #38e0c8;
+        text-decoration: none;
+      }
+      a:hover {
+        color: #7ff0df;
+      }
+      ::selection {
+        background: rgba(56, 224, 200, 0.3);
+      }
+      @keyframes rz-marquee {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      @keyframes rz-glow {
+        0%,
+        100% {
+          opacity: 0.55;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          opacity: 0.85;
+          transform: translate(-50%, -50%) scale(1.12);
+        }
+      }
+      [data-reveal] {
+        will-change: opacity, transform;
+      }
+    </style>
+
+    <slot name="head" />
+  </head>
+  <body style={`overflow-x:hidden`}>
+    <slot />
+
+    <script is:inline>
+      (function () {
+        // ---- theme: auto by default, manual toggle overrides ----------
+        if (window.RZTheme) RZTheme.apply("auto");
+        document.querySelectorAll("[data-theme-toggle]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (window.RZTheme) RZTheme.toggle();
+          });
+        });
+
+        // ---- nav dropdowns: hover to open, leave the row to close -----
+        document.querySelectorAll("[data-nav-links]").forEach((navLinks) => {
+          const panels = navLinks.querySelectorAll("[data-dd-panel]");
+          const triggers = navLinks.querySelectorAll("[data-dd]");
+          function closeAll() {
+            panels.forEach((p) => p.classList.remove("rz-open"));
+          }
+          triggers.forEach((trigger) => {
+            trigger.addEventListener("mouseenter", () => {
+              closeAll();
+              const key = trigger.getAttribute("data-dd");
+              const panel = navLinks.querySelector('[data-dd-panel="' + key + '"]');
+              if (panel) panel.classList.add("rz-open");
+            });
+          });
+          navLinks.addEventListener("mouseleave", closeAll);
+        });
+
+        // ---- cookie consent banner -------------------------------------
+        document.querySelectorAll("[data-cookie-banner]").forEach((banner) => {
+          var KEY = "rz-cookie-consent";
+          if (localStorage.getItem(KEY)) {
+            banner.style.display = "none";
+            return;
+          }
+          var accept = banner.querySelector("[data-cookie-accept]");
+          var decline = banner.querySelector("[data-cookie-decline]");
+          if (accept)
+            accept.addEventListener("click", function () {
+              localStorage.setItem(KEY, "accepted");
+              banner.style.display = "none";
+            });
+          if (decline)
+            decline.addEventListener("click", function () {
+              localStorage.setItem(KEY, "declined");
+              banner.style.display = "none";
+            });
+        });
+
+        // ---- testimonials carousel: prev/next + 6s autoplay ------------
+        document.querySelectorAll("[data-testimonials]").forEach((root) => {
+          var track = root.querySelector("[data-testimonial-track]");
+          if (!track) return;
+          var count = track.children.length;
+          var idx = 0;
+          var timer = null;
+          function render() {
+            track.style.transform = "translateX(-" + idx * 100 + "%)";
+          }
+          function startAutoplay() {
+            timer = setInterval(function () {
+              idx = (idx + 1) % count;
+              render();
+            }, 6000);
+          }
+          function stopAutoplay() {
+            clearInterval(timer);
+            timer = null;
+          }
+          root.querySelectorAll("[data-testimonial-prev]").forEach((btn) => {
+            btn.addEventListener("click", function () {
+              stopAutoplay();
+              idx = (idx - 1 + count) % count;
+              render();
+            });
+          });
+          root.querySelectorAll("[data-testimonial-next]").forEach((btn) => {
+            btn.addEventListener("click", function () {
+              stopAutoplay();
+              idx = (idx + 1) % count;
+              render();
+            });
+          });
+          startAutoplay();
+        });
+
+        // ---- scroll reveal: fail-safe, elements default visible --------
+        var toReveal = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));
+        if (toReveal.length) {
+          var io =
+            "IntersectionObserver" in window
+              ? new IntersectionObserver(
+                  function (entries) {
+                    entries.forEach(function (e) {
+                      if (e.isIntersecting) revealEl(e.target);
+                    });
+                  },
+                  { threshold: 0.08 }
+                )
+              : null;
+
+          function revealEl(el) {
+            el.style.opacity = "1";
+            el.style.transform = "translateY(0)";
+            el.dataset.revealed = "1";
+            if (io) io.unobserve(el);
+          }
+
+          function setup() {
+            toReveal.forEach(function (el) {
+              if (el.dataset.revealObserved) return;
+              el.dataset.revealObserved = "1";
+              var r = el.getBoundingClientRect();
+              if (r.top > window.innerHeight) {
+                el.style.opacity = "0";
+                el.style.transform = "translateY(26px)";
+                el.style.transition = "opacity .7s ease, transform .7s ease";
+                if (io) io.observe(el);
+              } else {
+                el.dataset.revealed = "1";
+              }
+            });
+          }
+
+          function revealInView() {
+            toReveal.forEach(function (el) {
+              if (el.dataset.revealed) return;
+              var r = el.getBoundingClientRect();
+              if (r.top < window.innerHeight * 0.95) revealEl(el);
+            });
+          }
+
+          setup();
+          setInterval(setup, 1500);
+          window.addEventListener("scroll", revealInView, { passive: true });
+        }
+      })();
+    </script>
+  </body>
+</html>
