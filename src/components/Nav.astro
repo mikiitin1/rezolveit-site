@@ -112,7 +112,13 @@ const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
   </div>
 
   <div class="rz-nav-actions">
-    <a href={altTarget} class="rz-lang-btn" title={isHe ? "Switch to English" : "עברית"}>
+    <a
+      href={altTarget}
+      class="rz-lang-btn"
+      data-lang-btn
+      title={isHe ? "Switch to English" : "עברית"}
+      {...(!isHe ? { "data-gated": "", style: "display:none" } : {})}
+    >
       {isHe ? "EN" : "עברית"}
     </a>
     <button class="rz-theme-btn" data-theme-toggle title={t(themeToggleTitle, lang)}>

@@ -90,11 +90,15 @@ const bodyFont = lang === "he" ? "'Heebo',sans-serif" : "'DM Sans',sans-serif";
       * {
         box-sizing: border-box;
       }
-      a {
+      /* Global (unscoped) so every link across pages, footer and components
+         matches the design's `a{text-decoration:none}` — not just Base's own
+         markup. Explicit underlines (e.g. .rz-underline-link) still win via
+         class specificity. */
+      :global(a) {
         color: #38e0c8;
         text-decoration: none;
       }
-      a:hover {
+      :global(a:hover) {
         color: #7ff0df;
       }
       ::selection {
@@ -131,13 +135,47 @@ const bodyFont = lang === "he" ? "'Heebo',sans-serif" : "'DM Sans',sans-serif";
 
     <script is:inline>
       (function () {
-        // ---- theme: auto by default, manual toggle overrides ----------
-        if (window.RZTheme) RZTheme.apply("auto");
+        // ---- theme: DARK by default; a manual toggle to light persists ---
+        if (window.RZTheme) RZTheme.apply("dark");
         document.querySelectorAll("[data-theme-toggle]").forEach((btn) => {
           btn.addEventListener("click", () => {
             if (window.RZTheme) RZTheme.toggle();
           });
         });
+
+        // ---- language switch: only surface the Hebrew option to visitors
+        // who are likely in Israel. Hebrew pages always keep the switch (so a
+        // Hebrew user can return to English); English pages gate it. A visitor
+        // counts as Israeli if ANY of: browser locale is Hebrew, timezone is
+        // Jerusalem, or (best-effort, async) their IP geolocates to IL.
+        (function () {
+          var gated = document.querySelectorAll("[data-lang-btn][data-gated]");
+          if (!gated.length) return; // no gated buttons on this (Hebrew) page
+          function reveal() {
+            gated.forEach(function (b) { b.style.display = ""; });
+          }
+          function localeOrTzIsIsraeli() {
+            try {
+              var langs = (navigator.languages || [navigator.language || ""])
+                .join(",").toLowerCase();
+              if (/(^|[,\s-])(he|iw)([,\s-]|$)/.test(langs)) return true;
+              var tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "");
+              if (tz === "Asia/Jerusalem" || tz === "Asia/Tel_Aviv") return true;
+            } catch (e) {}
+            return false;
+          }
+          if (localeOrTzIsIsraeli()) { reveal(); return; }
+          // Fallback: IP country lookup (free, best-effort). Stays hidden on
+          // any failure — the desired default for non-Israeli visitors.
+          try {
+            fetch("https://ipapi.co/country/")
+              .then(function (r) { return r.ok ? r.text() : ""; })
+              .then(function (c) {
+                if ((c || "").trim().toUpperCase() === "IL") reveal();
+              })
+              .catch(function () {});
+          } catch (e) {}
+        })();
 
         // ---- nav dropdowns: hover to open, leave the row to close -----
         document.querySelectorAll("[data-nav-links]").forEach((navLinks) => {
