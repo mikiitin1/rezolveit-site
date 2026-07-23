@@ -140,7 +140,11 @@ const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 18v3"></path></svg>
       </button>
     </div>
-    <a href={localePath("contact", lang)} class="rz-demo-btn">{t(bookDemoLabel, lang)}</a>
+    <a href="https://app.rezolveit.io" class="rz-signin-btn">{isHe ? "התחברות" : "Sign in"}</a>
+    <a href={localePath("contact", lang)} class="rz-demo-btn">
+      <span>{t(bookDemoLabel, lang)}</span>
+      <svg class="rz-demo-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+    </a>
   </div>
 </nav>
 <div class="rz-nav-spacer"></div>
@@ -354,7 +358,35 @@ const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
     color: var(--rz-accent);
     box-shadow: 0 1px 3px var(--shadow3);
   }
+  .rz-signin-btn {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 14.5px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    white-space: nowrap;
+    color: var(--text2);
+    background: transparent;
+    border: 1px solid var(--border2);
+    transition:
+      background 0.18s,
+      color 0.18s,
+      border-color 0.18s,
+      transform 0.15s,
+      box-shadow 0.15s;
+  }
+  .rz-signin-btn:hover {
+    background: #14141f;
+    color: #ffffff;
+    border-color: #14141f;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px var(--shadow2);
+  }
   .rz-demo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     background: var(--rz-accent);
     color: #06121a;
     font-weight: 600;
@@ -366,10 +398,28 @@ const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
       transform 0.15s,
       box-shadow 0.15s;
   }
+  .rz-demo-arrow {
+    transition: transform 0.18s ease;
+  }
   .rz-demo-btn:hover {
     color: #06121a;
     transform: translateY(-1px);
     box-shadow: 0 8px 28px rgba(56, 224, 200, 0.35);
+  }
+  .rz-demo-btn:hover .rz-demo-arrow {
+    transform: translateX(3px);
+  }
+  :global([dir="rtl"]) .rz-demo-arrow {
+    transform: scaleX(-1);
+  }
+  :global([dir="rtl"]) .rz-demo-btn:hover .rz-demo-arrow {
+    transform: scaleX(-1) translateX(3px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rz-demo-arrow,
+    .rz-signin-btn {
+      transition: none;
+    }
   }
 
   @media (max-width: 900px) {
