@@ -461,10 +461,12 @@ const benefits = [
           <div class="rz-pricing-price"><span class="rz-price-num">$0</span><span class="rz-price-unit">חינם</span></div>
           <a href={localePath("contact", lang)} class="rz-btn-outline">התחילו בחינם</a>
           <div class="rz-pricing-features">
-            <div class="rz-feature"><span class="rz-check">✓</span><span>כל המודולים — ITSM, EPM, HR, CMDB, ITAM, Security Ops, AIOps</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>Employee Center ו-AI Assist מובנה</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>עדכונים אוטומטיים וגיבויים מנוהלים</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>תמיכה בדוא"ל</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>כל המודולים — ITSM, EPM, HR, CMDB, ITAM, Security Ops, AIOps ו-Customer Service</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Employee Center ופורטל שירות עצמי ללקוחות</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>מנוע מטא-דאטה ו-Admin Studio — בנייה ללא קוד</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>AI Assist מובנה עם מפתחות מוצפנים משלכם</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>אבטחה ברמת השורה ומסלול ביקורת בכל רשומה</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>אחסון עצמי (MIT) או ענן מנוהל חינמי — עדכונים, גיבויים ותמיכה בדוא"ל</span></div>
           </div>
         </div>
 
@@ -475,13 +477,17 @@ const benefits = [
           <div class="rz-pricing-note">תוכנית מותאמת לארגון שלכם</div>
           <a href={localePath("contact", lang)} class="rz-btn-solid">דברו עם מכירות</a>
           <div class="rz-pricing-features">
-            <div class="rz-feature"><span class="rz-check">✓</span><span>כל מה שכלול ב-OSS</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>פיצ׳רים ארגוניים של AI — <a href="https://docs.rezolveit.io" target="_blank" rel="noopener" class="rz-underline-link">Docs</a></span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>אחסון עצמי או ענן פרטי חד-דיירי</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>SSO / SAML, תפקידים מותאמים ואבטחה ברמת השורה</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>SLA, תמיכה בעדיפות וסיוע בהטמעה</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>כל מה שכלול ב-Open Source, ובנוסף:</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>SSO / SAML / OIDC, תפקידים מותאמים ומדיניות RLS מותאמת</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>AI Enterprise — שער AI חיצוני, מעקות בטיחות, תקציבים וקונסולת ממשל — <a href="https://docs.rezolveit.io" target="_blank" rel="noopener" class="rz-underline-link">Docs</a></span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>אינטגרציות ארגוניות — Slack, Teams, PagerDuty, Jira, Webhooks, SMS/WhatsApp</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>תאימות — ייצוא ל-SIEM ומסלול ביקורת חסין-שינוי</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>ענן פרטי חד-דיירי, SLA, תמיכה בעדיפות והטמעה</span></div>
           </div>
         </div>
+      </div>
+      <div data-reveal class="rz-pricing-compare">
+        <a href="https://docs.rezolveit.io/editions" class="rz-underline-link">← להשוואה המלאה בין Open Source ל-Enterprise</a>
       </div>
     </section>
 
@@ -1452,6 +1458,12 @@ const benefits = [
     gap: 24px;
     max-width: 880px;
     margin: 0 auto;
+  }
+  .rz-pricing-compare {
+    max-width: 880px;
+    margin: 28px auto 0;
+    text-align: center;
+    font-size: 0.95rem;
   }
   .rz-pricing-card {
     position: relative;

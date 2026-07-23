@@ -470,10 +470,12 @@ const benefits = [
           <div class="rz-pricing-price"><span class="rz-price-num">$0</span><span class="rz-price-unit">Free</span></div>
           <a href={localePath("contact", lang)} class="rz-btn-outline">Get started free</a>
           <div class="rz-pricing-features">
-            <div class="rz-feature"><span class="rz-check">✓</span><span>All modules — ITSM, EPM, HR, CMDB, ITAM, Security Ops, AIOps</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>Employee Center &amp; built-in AI Assist</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>Automatic updates &amp; managed backups</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>Email support</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>All modules — ITSM, EPM, HR, CMDB, ITAM, Security Ops, AIOps &amp; Customer Service</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Employee Center &amp; Customer Self-Service Portal</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Metadata engine &amp; Admin Studio — build without code</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Built-in AI Assist with your own encrypted keys</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Row-level security &amp; audit trail on every record</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Self-host (MIT) or free managed cloud — updates, backups &amp; email support</span></div>
           </div>
         </div>
 
@@ -484,13 +486,17 @@ const benefits = [
           <div class="rz-pricing-note">Custom plan for your organization</div>
           <a href={localePath("contact", lang)} class="rz-btn-solid">Talk to sales</a>
           <div class="rz-pricing-features">
-            <div class="rz-feature"><span class="rz-check">✓</span><span>Everything in OSS</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>AI Enterprise Features — <a href="https://docs.rezolveit.io" target="_blank" rel="noopener" class="rz-underline-link">Docs</a></span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>Self-hosted or single-tenant private cloud</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>SSO / SAML, custom roles &amp; row-level security</span></div>
-            <div class="rz-feature"><span class="rz-check">✓</span><span>SLA, priority support &amp; onboarding assistance</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Everything in Open Source, plus:</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>SSO / SAML / OIDC, custom roles &amp; custom row-level-security policies</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>AI Enterprise — external gateway, guardrails, budgets &amp; governance console — <a href="https://docs.rezolveit.io" target="_blank" rel="noopener" class="rz-underline-link">Docs</a></span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Enterprise integrations — Slack, Teams, PagerDuty, Jira, webhooks, SMS/WhatsApp</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Compliance — SIEM export &amp; tamper-evident audit</span></div>
+            <div class="rz-feature"><span class="rz-check">✓</span><span>Single-tenant private cloud, SLA, priority support &amp; onboarding</span></div>
           </div>
         </div>
+      </div>
+      <div data-reveal class="rz-pricing-compare">
+        <a href="https://docs.rezolveit.io/editions" class="rz-underline-link">See the full Open Source vs Enterprise comparison →</a>
       </div>
     </section>
 
@@ -1461,6 +1467,12 @@ const benefits = [
     gap: 24px;
     max-width: 880px;
     margin: 0 auto;
+  }
+  .rz-pricing-compare {
+    max-width: 880px;
+    margin: 28px auto 0;
+    text-align: center;
+    font-size: 0.95rem;
   }
   .rz-pricing-card {
     position: relative;
