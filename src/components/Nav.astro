@@ -129,9 +129,17 @@ const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
     >
       {isHe ? "EN" : "עברית"}
     </a>
-    <button class="rz-theme-btn" data-theme-toggle title={t(themeToggleTitle, lang)}>
-      <span data-theme-icon>☀</span>
-    </button>
+    <div class="rz-theme-seg" role="group" aria-label={t(themeToggleTitle, lang)}>
+      <button type="button" class="rz-seg-btn" data-theme-seg="light" title="Light" aria-label="Light">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
+      <button type="button" class="rz-seg-btn" data-theme-seg="dark" title="Dark" aria-label="Dark">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path></svg>
+      </button>
+      <button type="button" class="rz-seg-btn" data-theme-seg="system" title="System" aria-label="System">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 18v3"></path></svg>
+      </button>
+    </div>
     <a href={localePath("contact", lang)} class="rz-demo-btn">{t(bookDemoLabel, lang)}</a>
   </div>
 </nav>
@@ -311,23 +319,40 @@ const anchorClass = isHe ? "rz-anchor-end" : "rz-anchor-start";
     border-color: rgba(56, 224, 200, 0.5);
     color: #38e0c8;
   }
-  .rz-theme-btn {
-    width: 40px;
-    height: 40px;
+  .rz-theme-seg {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
     flex-shrink: 0;
+    padding: 3px;
     border: 1px solid var(--border2);
-    border-radius: 10px;
-    background: none;
-    color: var(--text3);
-    font-size: 17px;
-    cursor: pointer;
-    display: flex;
+    border-radius: 999px;
+    background: var(--card-bg);
+  }
+  .rz-seg-btn {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+      color 0.15s,
+      background 0.15s,
+      box-shadow 0.15s;
   }
-  .rz-theme-btn:hover {
-    border-color: rgba(56, 224, 200, 0.5);
-    color: #38e0c8;
+  .rz-seg-btn:hover {
+    color: var(--text2);
+  }
+  .rz-seg-btn.is-active {
+    background: var(--panel);
+    color: var(--rz-accent);
+    box-shadow: 0 1px 3px var(--shadow3);
   }
   .rz-demo-btn {
     background: var(--rz-accent);

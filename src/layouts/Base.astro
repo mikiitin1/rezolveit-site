@@ -135,6 +135,51 @@ const bodyFont = lang === "he" ? "'Heebo',sans-serif" : "'DM Sans',sans-serif";
       [data-reveal] {
         will-change: opacity, transform;
       }
+
+      /* Animated moving-border beam on primary CTAs (see llmgateway.io). A
+         rotating conic-gradient is masked to a thin ring hugging the button. */
+      @property --rz-beam {
+        syntax: "<angle>";
+        inherits: false;
+        initial-value: 0deg;
+      }
+      :global(.rz-btn-cta) {
+        position: relative;
+        isolation: isolate;
+      }
+      :global(.rz-btn-cta)::before {
+        content: "";
+        position: absolute;
+        inset: -2px;
+        border-radius: inherit;
+        padding: 2px;
+        background: conic-gradient(
+          from var(--rz-beam),
+          transparent 0deg,
+          transparent 210deg,
+          rgba(56, 224, 200, 0.7) 285deg,
+          #ffffff 330deg,
+          transparent 360deg
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+        z-index: -1;
+        animation: rz-beam-rot 3s linear infinite;
+      }
+      @keyframes rz-beam-rot {
+        to {
+          --rz-beam: 360deg;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        :global(.rz-btn-cta)::before {
+          animation: none;
+        }
+      }
     </style>
 
     <slot name="head" />
@@ -144,13 +189,15 @@ const bodyFont = lang === "he" ? "'Heebo',sans-serif" : "'DM Sans',sans-serif";
 
     <script is:inline>
       (function () {
-        // ---- theme: DARK by default; a manual toggle to light persists ---
-        if (window.RZTheme) RZTheme.apply("dark");
-        document.querySelectorAll("[data-theme-toggle]").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            if (window.RZTheme) RZTheme.toggle();
+        // ---- theme: 3-way segmented control (light / dark / system) ------
+        if (window.RZTheme) {
+          document.querySelectorAll("[data-theme-seg]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              RZTheme.set(btn.getAttribute("data-theme-seg"));
+            });
           });
-        });
+          RZTheme.apply();
+        }
 
         // ---- language switch: only surface the Hebrew option to visitors
         // who are likely in Israel. Hebrew pages always keep the switch (so a

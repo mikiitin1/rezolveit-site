@@ -1,6 +1,10 @@
-// RezolveIT theme switcher — light by day (07:00–19:00), dark by night, or a
-// user-chosen mode saved in localStorage (overrides the clock).
+// RezolveIT theme switcher — three explicit modes: 'light', 'dark', or
+// 'system' (follows the OS prefers-color-scheme). The chosen mode is saved in
+// localStorage under 'rz-theme'. Default (nothing saved) is 'dark', matching
+// the site's dark-first design. The :root palette in Base.astro is the dark
+// palette; paint() overlays the light palette when light is effective.
 window.RZTheme = {
+  KEY: 'rz-theme',
   light: {
     '--bg':'#F3F4F9','--panel':'#FFFFFF','--panel-deep':'#F7F8FC','--inset':'#EDEFF6',
     '--cta1':'#FFFFFF','--cta2':'#F1F3FA',
@@ -12,35 +16,66 @@ window.RZTheme = {
     '--nav-bg':'rgba(247,248,252,.85)',
     '--shadow':'rgba(30,35,70,.16)','--shadow2':'rgba(30,35,70,.14)','--shadow3':'rgba(30,35,70,.12)'
   },
-  timer: null,
-  // resolves the *effective* light/dark given the configured mode
+  media: null,
+  // The saved mode, defaulting to 'dark' when nothing is stored.
+  getMode() {
+    var m = null;
+    try { m = localStorage.getItem(this.KEY); } catch (e) {}
+    return (m === 'light' || m === 'dark' || m === 'system') ? m : 'dark';
+  },
+  // Whether the OS currently prefers a light color scheme.
+  systemPrefersLight() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
+  },
+  // Resolve a mode to an effective light/dark boolean.
   isLight(mode) {
-    const saved = localStorage.getItem('rz-theme'); // 'light' | 'dark' | null
-    const m = saved || mode || 'auto';
+    var m = mode || this.getMode();
     if (m === 'light') return true;
     if (m === 'dark') return false;
-    const h = new Date().getHours();
-    return h >= 7 && h < 19;
+    return this.systemPrefersLight(); // 'system'
   },
+  // Apply or remove the light palette and update the toolbar icon/segments.
   paint(useLight) {
-    const rs = document.documentElement.style;
-    if (useLight) Object.keys(this.light).forEach(k => rs.setProperty(k, this.light[k]));
-    else Object.keys(this.light).forEach(k => rs.removeProperty(k));
-    document.querySelectorAll('[data-theme-icon]').forEach(el => { el.textContent = useLight ? '☾' : '☀'; });
+    var rs = document.documentElement.style;
+    var self = this;
+    if (useLight) Object.keys(this.light).forEach(function (k) { rs.setProperty(k, self.light[k]); });
+    else Object.keys(this.light).forEach(function (k) { rs.removeProperty(k); });
+    // Legacy single-icon toggle (if still present anywhere).
+    document.querySelectorAll('[data-theme-icon]').forEach(function (el) {
+      el.textContent = useLight ? '☾' : '☀';
+    });
   },
+  // Reflect the active mode on the segmented control.
+  syncSegments(mode) {
+    var m = mode || this.getMode();
+    document.querySelectorAll('[data-theme-seg]').forEach(function (btn) {
+      var on = btn.getAttribute('data-theme-seg') === m;
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      btn.classList.toggle('is-active', on);
+    });
+  },
+  // Apply a mode (or the saved one) and wire the system listener once.
   apply(mode) {
-    clearInterval(this.timer);
-    this.mode = mode || 'auto';
-    this.paint(this.isLight(this.mode));
-    // keep tracking the clock only while in auto (no saved override)
-    if (!localStorage.getItem('rz-theme')) {
-      this.timer = setInterval(() => this.paint(this.isLight(this.mode)), 60000);
+    var m = mode || this.getMode();
+    this.mode = m;
+    this.paint(this.isLight(m));
+    this.syncSegments(m);
+    if (!this.media && window.matchMedia) {
+      this.media = window.matchMedia('(prefers-color-scheme: light)');
+      var self = this;
+      var onChange = function () { if (self.getMode() === 'system') self.paint(self.isLight('system')); };
+      if (this.media.addEventListener) this.media.addEventListener('change', onChange);
+      else if (this.media.addListener) this.media.addListener(onChange); // older Safari
     }
   },
-  toggle() {
-    const nowLight = this.isLight(this.mode);
-    localStorage.setItem('rz-theme', nowLight ? 'dark' : 'light');
-    clearInterval(this.timer);
-    this.paint(!nowLight);
+  // Persist and apply a user choice.
+  set(mode) {
+    if (mode !== 'light' && mode !== 'dark' && mode !== 'system') return;
+    try { localStorage.setItem(this.KEY, mode); } catch (e) {}
+    this.apply(mode);
   }
 };
+
+// Paint as early as possible (this file loads blocking in <head>) to avoid a
+// flash. The segmented control is wired up later, once the DOM is ready.
+try { window.RZTheme.apply(); } catch (e) {}
