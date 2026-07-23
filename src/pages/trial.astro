@@ -1,0 +1,474 @@
+---
+// Self-serve trial signup + instant (pre-warmed) provisioning.
+// Flow: Create account -> Verify email -> Provision tenant -> Workspace ready.
+//
+// This page is the UI/flow. The three server touch-points are marked with
+// `TODO(backend)` in the inline script:
+//   1. apiSignup()   -> Supabase Auth signUp + create pending workspace row
+//   2. apiProvision() -> claim a pre-warmed tenant, map <slug>.rezolveit.app
+//                        on Vercel (wildcard domain), seed sample data
+//   3. apiResend()    -> resend the verification email
+// The email link should return the user to /trial?token=<verify_token>, which
+// this page detects on load and advances straight to provisioning.
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  lang="en"
+  title="Start your free trial — RezolveIT"
+  description="Spin up a private RezolveIT workspace for your team in under a minute. 14-day trial, no credit card required."
+>
+  <main class="tr-wrap">
+    <header class="tr-top">
+      <a href="/" class="tr-logo">
+        <span class="tr-logo-mark">R</span>
+        <span class="tr-wordmark">Rezolve<span class="it">IT</span></span>
+      </a>
+      <ol class="tr-steps" id="trSteps">
+        <li data-step="0"><span class="dot">1</span><span class="lbl">Account</span></li>
+        <li data-step="1"><span class="dot">2</span><span class="lbl">Verify</span></li>
+        <li data-step="2"><span class="dot">3</span><span class="lbl">Ready</span></li>
+      </ol>
+    </header>
+
+    <div class="tr-stage">
+      <!-- STEP 1 — CREATE ACCOUNT -->
+      <section class="tr-screen is-active" id="scAccount">
+        <div class="tr-auth">
+          <aside class="tr-aside">
+            <div class="tr-logo-mark lg">R</div>
+            <p class="tr-aside-quote">Your team's service desk,<br />live in under a minute.</p>
+            <ul class="tr-aside-points">
+              <li><span class="ck">✓</span>Your own private, pre-warmed instance</li>
+              <li><span class="ck">✓</span>Pre-loaded with sample tickets &amp; articles</li>
+              <li><span class="ck">✓</span>14-day trial · no credit card required</li>
+            </ul>
+            <p class="tr-aside-foot"><span class="pulse"></span> 2,400+ teams onboarded this month</p>
+          </aside>
+
+          <div class="tr-main">
+            <h1>Start your free trial</h1>
+            <p class="tr-sub">Spin up a private RezolveIT workspace for your team.</p>
+
+            <div class="tr-sso">
+              <button type="button" class="tr-sso-btn" data-sso="google">
+                <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#4285F4" d="M23 12.3c0-.8-.1-1.4-.2-2.1H12v3.9h6.2c-.1 1-.8 2.5-2.2 3.5v2.9h3.6C21.7 18.5 23 15.7 23 12.3z"></path><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.3 1.1-3.7 1.1-2.8 0-5.2-1.9-6.1-4.5H2.2v2.9C4 20.5 7.7 23 12 23z"></path><path fill="#FBBC05" d="M5.9 14.1c-.2-.7-.4-1.4-.4-2.1s.1-1.5.4-2.1V7H2.2C1.4 8.5 1 10.2 1 12s.4 3.5 1.2 5z"></path><path fill="#EA4335" d="M12 5.4c1.6 0 2.9.6 4 1.5l3-3C17.5 2.1 15 1 12 1 7.7 1 4 3.5 2.2 7l3.7 2.9C6.8 7.3 9.2 5.4 12 5.4z"></path></svg>
+                Google
+              </button>
+              <button type="button" class="tr-sso-btn" data-sso="microsoft">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#2f9fe0"><path d="M11.4 11.4H2V2h9.4zM22 11.4h-9.4V2H22zM11.4 22H2v-9.4h9.4zM22 22h-9.4v-9.4H22z"></path></svg>
+                Microsoft
+              </button>
+            </div>
+            <div class="tr-divider"><span>or sign up with email</span></div>
+
+            <form id="trForm" novalidate>
+              <div class="tr-field">
+                <label for="trEmail">Work email</label>
+                <input id="trEmail" type="email" placeholder="you@company.com" autocomplete="email" />
+                <p class="tr-hint" id="trEmailHint"></p>
+              </div>
+              <div class="tr-field">
+                <label for="trWorkspace">Workspace name</label>
+                <div class="tr-subdomain">
+                  <input id="trWorkspace" type="text" placeholder="Acme Corp" autocomplete="off" />
+                  <span class="suffix"><span class="slug" id="trSlug">your-team</span>.rezolveit.app</span>
+                </div>
+                <p class="tr-hint">This becomes your team's private URL.</p>
+              </div>
+              <div class="tr-field">
+                <label for="trPassword">Password</label>
+                <input id="trPassword" type="password" placeholder="At least 8 characters" autocomplete="new-password" />
+                <div class="tr-strength" id="trStrength"><span></span><span></span><span></span><span></span></div>
+              </div>
+              <label class="tr-terms">
+                <input id="trTerms" type="checkbox" />
+                <span>I agree to the <a href="/terms">Terms</a> and <a href="/privacy">Privacy Policy</a>.</span>
+              </label>
+              <button type="submit" class="tr-btn rz-btn-cta" id="trCreate" disabled>
+                <span class="spin"></span><span class="label">Create account</span>
+              </button>
+              <p class="tr-err" id="trFormErr"></p>
+            </form>
+            <p class="tr-signin">Already have a workspace? <a href="https://app.rezolveit.io">Sign in</a></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 2 — VERIFY EMAIL -->
+      <section class="tr-screen" id="scVerify">
+        <div class="tr-card">
+          <div class="tr-badge accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 6 10 7 10-7"></path></svg>
+          </div>
+          <h1>Verify your email</h1>
+          <p class="tr-lead">We sent a verification link to<br /><span class="strong" id="trVerifyEmail">you@company.com</span></p>
+          <p class="tr-lead sm">Click the link in that email to activate your workspace — it keeps your team's data secure.</p>
+          <p class="tr-resend">Didn't get it? <a id="trResend" role="button" tabindex="0">Resend link</a> <span id="trResendState"></span></p>
+        </div>
+      </section>
+
+      <!-- STEP 3 — PROVISIONING -->
+      <section class="tr-screen" id="scProvision">
+        <div class="tr-card wide">
+          <div class="tr-prov-head">
+            <div class="tr-orb">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"></path></svg>
+            </div>
+            <div>
+              <h1>Preparing your workspace</h1>
+              <p>Claiming a pre-warmed instance — this only takes a moment.</p>
+            </div>
+          </div>
+          <div class="tr-prov-url">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"></path></svg>
+            <b id="trProvUrl">your-team.rezolveit.app</b>
+          </div>
+          <div class="tr-prov-steps" id="trProvSteps">
+            <div class="tr-prov-step" data-step="0"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><div class="main"><div>Claiming a pre-warmed instance</div><div class="sub">Reserved from the warm pool</div></div><span class="fast" hidden>Instant</span></div>
+            <div class="tr-prov-step" data-step="1"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><div class="main"><div>Mapping your subdomain</div><div class="sub" id="trProvSub">Routing your-team.rezolveit.app via Vercel</div></div></div>
+            <div class="tr-prov-step" data-step="2"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><div class="main"><div>Seeding sample tickets &amp; knowledge base</div><div class="sub">So you have something to explore</div></div></div>
+            <div class="tr-prov-step" data-step="3"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><div class="main"><div>Finalizing secure access</div><div class="sub">Signing you in as owner</div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4 — READY -->
+      <section class="tr-screen" id="scReady">
+        <div class="tr-card">
+          <div class="tr-badge accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+          </div>
+          <h1>Your workspace is ready 🎉</h1>
+          <p class="tr-lead">Everything's provisioned and waiting for you.</p>
+          <div class="tr-ready-url">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20"></path></svg>
+            <span id="trReadyUrl">your-team.rezolveit.app</span>
+          </div>
+          <div class="tr-pills">
+            <span class="pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>14 days left</span>
+            <span class="pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>Owner access</span>
+            <span class="pill"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h10M4 17h7"></path></svg>Sample data loaded</span>
+          </div>
+          <a class="tr-btn rz-btn-cta" id="trEnter" href="#">
+            <span class="label">Enter your workspace</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+        </div>
+      </section>
+    </div>
+    <div class="tr-confetti" id="trConfetti"></div>
+  </main>
+
+  <style>
+    .tr-wrap { min-height: 100vh; display: flex; flex-direction: column; }
+    .tr-top {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 28px; max-width: 1120px; width: 100%; margin: 0 auto;
+    }
+    .tr-logo { display: flex; align-items: center; gap: 10px; }
+    .tr-logo-mark {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--rz-accent), #1b9bd8);
+      display: grid; place-items: center; color: #06121a; font-weight: 700;
+      font-family: "Sora", sans-serif; flex: none;
+    }
+    .tr-logo-mark.lg { width: 40px; height: 40px; border-radius: 11px; font-size: 20px; }
+    .tr-wordmark { font-family: "Sora", sans-serif; font-weight: 700; letter-spacing: -0.02em; font-size: 18px; color: var(--text); }
+    .tr-wordmark .it { color: var(--rz-accent); }
+    .tr-steps { list-style: none; display: flex; gap: 8px; margin: 0; padding: 0; }
+    .tr-steps li { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13.5px; }
+    .tr-steps li:not(:last-child)::after { content: ""; width: 22px; height: 1px; background: var(--border2); margin-left: 4px; }
+    .tr-steps .dot {
+      width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border2);
+      display: grid; place-items: center; font-size: 11px; font-weight: 700;
+    }
+    .tr-steps li.is-active { color: var(--rz-accent); }
+    .tr-steps li.is-active .dot { background: var(--rz-accent); border-color: var(--rz-accent); color: #06121a; }
+    .tr-steps li.is-done .dot { background: var(--rz-accent); border-color: var(--rz-accent); color: #06121a; }
+
+    .tr-stage { flex: 1; display: grid; place-items: center; padding: 24px 20px 70px; position: relative; }
+    .tr-screen { display: none; width: 100%; animation: trFade .35s ease; }
+    .tr-screen.is-active { display: block; }
+    @keyframes trFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* account */
+    .tr-auth {
+      max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--panel); border: 1px solid var(--border); border-radius: 22px;
+      overflow: hidden; box-shadow: 0 30px 80px var(--shadow2);
+    }
+    .tr-aside {
+      position: relative; overflow: hidden; padding: 42px 38px; display: flex; flex-direction: column;
+      background: linear-gradient(160deg, #0b1a24, #0a2530 55%, #0c3a3c);
+    }
+    .tr-aside::after { content: ""; position: absolute; bottom: -30%; right: -20%; width: 70%; height: 70%; background: radial-gradient(closest-side, rgba(56,224,200,.22), transparent); }
+    .tr-aside > * { position: relative; z-index: 1; }
+    .tr-aside-quote { font-family: "Sora", sans-serif; font-size: 22px; font-weight: 600; line-height: 1.35; margin: 24px 0 20px; color: #fff; }
+    .tr-aside-points { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 13px; }
+    .tr-aside-points li { display: flex; gap: 11px; align-items: flex-start; font-size: 14px; color: var(--text3); }
+    .tr-aside-points .ck { flex: none; width: 20px; height: 20px; border-radius: 50%; background: rgba(56,224,200,.14); color: var(--rz-accent); display: grid; place-items: center; font-size: 12px; }
+    .tr-aside-foot { margin-top: 26px; font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+    .tr-aside-foot .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--rz-accent); box-shadow: 0 0 0 3px rgba(56,224,200,.2); }
+
+    .tr-main { padding: 42px 42px 36px; }
+    .tr-main h1 { font-family: "Sora", sans-serif; font-size: 25px; letter-spacing: -0.02em; margin: 0 0 6px; color: var(--text); }
+    .tr-sub { color: var(--muted); font-size: 14.5px; margin: 0 0 22px; }
+    .tr-sso { display: flex; gap: 10px; margin-bottom: 18px; }
+    .tr-sso-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 9px; padding: 11px; border: 1px solid var(--border2); background: var(--card-bg); border-radius: 11px; font: inherit; font-size: 14px; font-weight: 500; color: var(--text2); cursor: pointer; }
+    .tr-sso-btn:hover { background: var(--card-bg2); border-color: rgba(56,224,200,.4); }
+    .tr-divider { display: flex; align-items: center; gap: 12px; color: var(--muted2); font-size: 12px; margin: 4px 0 18px; }
+    .tr-divider::before, .tr-divider::after { content: ""; height: 1px; flex: 1; background: var(--border); }
+    .tr-field { margin-bottom: 15px; }
+    .tr-field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text3); }
+    .tr-field input { width: 100%; padding: 11px 13px; border: 1px solid var(--border2); border-radius: 11px; font: inherit; font-size: 14.5px; background: var(--inset); color: var(--text); outline: none; transition: border-color .15s, box-shadow .15s; }
+    .tr-field input::placeholder { color: var(--muted2); }
+    .tr-field input:focus { border-color: var(--rz-accent); box-shadow: 0 0 0 3px rgba(56,224,200,.14); }
+    .tr-field input.err { border-color: #f5567b; box-shadow: 0 0 0 3px rgba(245,86,123,.15); }
+    .tr-hint { font-size: 12px; color: var(--muted); margin: 5px 0 0; }
+    .tr-hint.error { color: #f5567b; }
+    .tr-subdomain { display: flex; align-items: stretch; border: 1px solid var(--border2); border-radius: 11px; overflow: hidden; background: var(--inset); }
+    .tr-subdomain:focus-within { border-color: var(--rz-accent); box-shadow: 0 0 0 3px rgba(56,224,200,.14); }
+    .tr-subdomain input { border: none; box-shadow: none; border-radius: 0; flex: 1; min-width: 0; background: transparent; }
+    .tr-subdomain .suffix { display: flex; align-items: center; padding: 0 12px; background: var(--panel-deep); border-left: 1px solid var(--border); color: var(--muted); font-size: 13px; white-space: nowrap; }
+    .tr-subdomain .slug { color: var(--rz-accent); font-weight: 600; }
+    .tr-strength { display: flex; gap: 5px; margin-top: 8px; }
+    .tr-strength span { height: 4px; flex: 1; background: var(--line2, #2a2a3c); border-radius: 3px; transition: background .2s; }
+    .tr-terms { display: flex; align-items: flex-start; gap: 9px; font-size: 13px; color: var(--muted); margin: 8px 0 18px; }
+    .tr-terms input { margin-top: 2px; width: 15px; height: 15px; accent-color: var(--rz-accent); }
+    .tr-terms a { color: var(--rz-accent); font-weight: 500; }
+    .tr-btn { width: 100%; padding: 12px; background: var(--rz-accent); color: #06121a; border: none; border-radius: 11px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 9px; transition: transform .15s, box-shadow .15s; text-decoration: none; }
+    .tr-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(56,224,200,.32); color: #06121a; }
+    .tr-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+    .tr-btn .spin { width: 16px; height: 16px; border: 2px solid rgba(6,18,26,.35); border-top-color: #06121a; border-radius: 50%; animation: trSpin .7s linear infinite; display: none; }
+    .tr-btn.loading .spin { display: block; }
+    @keyframes trSpin { to { transform: rotate(360deg); } }
+    .tr-err { color: #f5567b; font-size: 13px; margin: 10px 0 0; min-height: 1px; }
+    .tr-signin { text-align: center; font-size: 13.5px; color: var(--muted); margin: 18px 0 0; }
+    .tr-signin a { color: var(--rz-accent); font-weight: 600; }
+
+    /* cards */
+    .tr-card { max-width: 520px; margin: 0 auto; background: var(--panel); border: 1px solid var(--border); border-radius: 22px; box-shadow: 0 30px 80px var(--shadow2); padding: 42px 38px; text-align: center; }
+    .tr-card.wide { max-width: 560px; text-align: left; }
+    .tr-badge { width: 64px; height: 64px; border-radius: 18px; display: grid; place-items: center; margin: 0 auto 20px; }
+    .tr-badge svg { width: 29px; height: 29px; }
+    .tr-badge.accent { background: rgba(56,224,200,.12); color: var(--rz-accent); }
+    .tr-card h1 { font-family: "Sora", sans-serif; font-size: 23px; letter-spacing: -0.02em; margin: 0 0 10px; color: var(--text); }
+    .tr-lead { color: var(--muted); font-size: 15px; line-height: 1.6; margin: 0 0 8px; }
+    .tr-lead.sm { font-size: 14px; margin-top: 10px; }
+    .tr-lead .strong { color: var(--text); font-weight: 600; }
+    .tr-resend { font-size: 13px; color: var(--muted); margin: 22px 0 0; }
+    .tr-resend a { color: var(--rz-accent); font-weight: 600; cursor: pointer; }
+    #trResendState { color: var(--rz-accent); }
+
+    /* provisioning */
+    .tr-prov-head { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+    .tr-orb { width: 52px; height: 52px; border-radius: 14px; background: linear-gradient(135deg, var(--rz-accent), #1b9bd8); display: grid; place-items: center; color: #06121a; flex: none; box-shadow: 0 8px 22px rgba(56,224,200,.3); }
+    .tr-orb svg { width: 26px; height: 26px; animation: trPulse 1.6s ease-in-out infinite; }
+    @keyframes trPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.12); opacity: .72; } }
+    .tr-prov-head h1 { font-family: "Sora", sans-serif; font-size: 20px; margin: 0; color: var(--text); }
+    .tr-prov-head p { font-size: 13.5px; color: var(--muted); margin: 2px 0 0; }
+    .tr-prov-url { margin: 18px 0 20px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--inset); font-size: 14px; display: flex; align-items: center; gap: 10px; color: var(--text2); }
+    .tr-prov-url svg { color: var(--muted); }
+    .tr-prov-url b { color: var(--rz-accent); font-weight: 600; }
+    .tr-prov-steps { display: flex; flex-direction: column; }
+    .tr-prov-step { display: flex; align-items: center; gap: 13px; padding: 13px 4px; font-size: 14.5px; color: var(--muted); border-bottom: 1px solid var(--border); }
+    .tr-prov-step:last-child { border-bottom: none; }
+    .tr-prov-step .tick { width: 24px; height: 24px; border-radius: 50%; flex: none; display: grid; place-items: center; border: 2px solid var(--line2, #2a2a3c); position: relative; }
+    .tr-prov-step .tick svg { display: none; width: 13px; height: 13px; color: #06121a; }
+    .tr-prov-step.doing .tick { border-color: var(--rz-accent); }
+    .tr-prov-step.doing .tick::after { content: ""; position: absolute; inset: 2px; border: 2px solid var(--rz-accent); border-top-color: transparent; border-radius: 50%; animation: trSpin .7s linear infinite; }
+    .tr-prov-step.done .tick { background: var(--rz-accent); border-color: var(--rz-accent); }
+    .tr-prov-step.done .tick svg { display: block; }
+    .tr-prov-step.done, .tr-prov-step.doing { color: var(--text); }
+    .tr-prov-step .main { flex: 1; }
+    .tr-prov-step .sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+    .tr-prov-step .fast { font-size: 11px; font-weight: 700; color: var(--rz-accent); background: rgba(56,224,200,.12); padding: 2px 9px; border-radius: 20px; }
+
+    /* ready */
+    .tr-ready-url { margin: 4px auto; display: inline-flex; align-items: center; gap: 10px; padding: 11px 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--inset); font-size: 15px; font-weight: 600; color: var(--rz-accent); }
+    .tr-pills { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 20px 0 24px; }
+    .tr-pills .pill { font-size: 12.5px; color: var(--text2); background: var(--card-bg); border: 1px solid var(--border2); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 7px; }
+    .tr-pills .pill svg { color: var(--rz-accent); }
+
+    .tr-confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 40; }
+    .tr-confetti i { position: absolute; top: -10px; width: 8px; height: 12px; opacity: .9; animation: trFall linear forwards; }
+    @keyframes trFall { to { transform: translateY(105vh) rotate(540deg); opacity: .15; } }
+
+    @media (max-width: 820px) {
+      .tr-auth { grid-template-columns: 1fr; }
+      .tr-aside { display: none; }
+      .tr-steps .lbl { display: none; }
+    }
+  </style>
+
+  <script is:inline>
+    (function () {
+      var state = { email: "", workspace: "", slug: "your-team", name: "" };
+      var $ = function (id) { return document.getElementById(id); };
+      var screens = { account: $("scAccount"), verify: $("scVerify"), provision: $("scProvision"), ready: $("scReady") };
+      var stepIndexByScreen = { account: 0, verify: 1, provision: 2, ready: 2 };
+
+      function slugify(s) {
+        return (s || "").toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 24) || "your-team";
+      }
+      function setSteps(active) {
+        [].forEach.call($("trSteps").children, function (li, i) {
+          li.classList.toggle("is-active", i === active);
+          li.classList.toggle("is-done", i < active);
+        });
+      }
+      function goto(name) {
+        Object.keys(screens).forEach(function (k) { screens[k].classList.toggle("is-active", k === name); });
+        setSteps(stepIndexByScreen[name]);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (name === "provision") runProvision();
+        if (name === "ready") { updateUrls(); burst(); }
+      }
+
+      // ---- form ----
+      var email = $("trEmail"), workspace = $("trWorkspace"), password = $("trPassword"),
+          terms = $("trTerms"), createBtn = $("trCreate");
+      function emailValid(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+      function syncSlug() { state.slug = slugify(workspace.value); $("trSlug").textContent = state.slug; }
+      function validate() {
+        var ok = emailValid(email.value) && workspace.value.trim().length > 1 && password.value.length >= 8 && terms.checked;
+        createBtn.disabled = !ok; return ok;
+      }
+      workspace.addEventListener("input", function () { syncSlug(); validate(); });
+      email.addEventListener("input", function () {
+        if (email.value && !emailValid(email.value)) { $("trEmailHint").textContent = "Enter a valid work email"; $("trEmailHint").className = "tr-hint error"; email.classList.add("err"); }
+        else { $("trEmailHint").textContent = ""; $("trEmailHint").className = "tr-hint"; email.classList.remove("err"); }
+        validate();
+      });
+      password.addEventListener("input", function () {
+        var v = password.value, sc = 0;
+        if (v.length >= 8) sc++; if (/[A-Z]/.test(v)) sc++; if (/[0-9]/.test(v)) sc++; if (/[^A-Za-z0-9]/.test(v)) sc++;
+        var cols = ["#f5567b", "#f0a850", "#e6cf3f", "#38e0c8"];
+        [].forEach.call($("trStrength").children, function (b, n) { b.style.background = n < sc ? cols[Math.min(sc - 1, 3)] : "var(--line2,#2a2a3c)"; });
+        validate();
+      });
+      terms.addEventListener("change", validate);
+
+      [].forEach.call(document.querySelectorAll("[data-sso]"), function (btn) {
+        btn.addEventListener("click", function () {
+          // TODO(backend): kick off OAuth with the chosen provider (Supabase signInWithOAuth).
+          $("trFormErr").textContent = "SSO with " + btn.getAttribute("data-sso") + " isn't wired up yet.";
+        });
+      });
+
+      $("trForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!validate()) return;
+        state.email = email.value.trim();
+        state.workspace = workspace.value.trim();
+        state.name = state.workspace.split(/\s+/)[0] || "there";
+        $("trFormErr").textContent = "";
+        createBtn.classList.add("loading");
+        createBtn.querySelector(".label").textContent = "Creating account…";
+        apiSignup(state).then(function () {
+          createBtn.classList.remove("loading");
+          createBtn.querySelector(".label").textContent = "Create account";
+          $("trVerifyEmail").textContent = state.email;
+          goto("verify");
+        }).catch(function (err) {
+          createBtn.classList.remove("loading");
+          createBtn.querySelector(".label").textContent = "Create account";
+          $("trFormErr").textContent = (err && err.message) || "Something went wrong. Please try again.";
+        });
+      });
+
+      // ---- verify ----
+      $("trResend").addEventListener("click", function () {
+        apiResend(state).then(function () {
+          $("trResendState").textContent = "· Link resent ✓";
+          setTimeout(function () { $("trResendState").textContent = ""; }, 2500);
+        });
+      });
+
+      // ---- provisioning animation ----
+      function runProvision() {
+        $("trProvUrl").textContent = state.slug + ".rezolveit.app";
+        $("trProvSub").textContent = "Routing " + state.slug + ".rezolveit.app via Vercel";
+        var steps = [].slice.call(document.querySelectorAll("#trProvSteps .tr-prov-step"));
+        steps.forEach(function (s) { s.classList.remove("done", "doing"); });
+        var badge = steps[0].querySelector(".fast"); if (badge) badge.hidden = true;
+
+        // TODO(backend): call apiProvision() and drive these ticks off real
+        // progress (SSE/websocket or polling). The timings below are the
+        // pre-warmed "instant" feel used while the request completes.
+        apiProvision(state);
+        var timings = [[0, 500], [600, 650], [1300, 700], [2050, 600]];
+        steps.forEach(function (step, n) {
+          setTimeout(function () { step.classList.add("doing"); }, timings[n][0]);
+          setTimeout(function () {
+            step.classList.remove("doing"); step.classList.add("done");
+            if (n === 0 && badge) badge.hidden = false;
+            if (n === steps.length - 1) setTimeout(function () { if (screens.provision.classList.contains("is-active")) goto("ready"); }, 700);
+          }, timings[n][0] + timings[n][1]);
+        });
+      }
+
+      // ---- ready ----
+      function updateUrls() {
+        var d = state.slug + ".rezolveit.app";
+        $("trReadyUrl").textContent = d;
+        $("trEnter").setAttribute("href", "https://" + d);
+      }
+      function burst() {
+        var c = $("trConfetti"); c.innerHTML = "";
+        var cols = ["#38e0c8", "#1b9bd8", "#8feadc", "#7ff0df", "#ffffff"];
+        for (var i = 0; i < 80; i++) {
+          var p = document.createElement("i");
+          p.style.left = (Math.random() * 100) + "vw";
+          p.style.background = cols[i % cols.length];
+          p.style.animationDuration = (2 + Math.random() * 2) + "s";
+          p.style.animationDelay = (Math.random() * 0.6) + "s";
+          p.style.transform = "rotate(" + (Math.random() * 360) + "deg)";
+          c.appendChild(p);
+        }
+        setTimeout(function () { c.innerHTML = ""; }, 4200);
+      }
+
+      // ---------------- backend touch-points (stubbed) ----------------
+      // Replace each with a real fetch to your API. They currently resolve
+      // after a short delay so the flow is walkable before the backend exists.
+      function apiSignup(s) {
+        // TODO(backend): POST /api/trial/signup
+        //   -> supabase.auth.signUp({ email, password }) with emailRedirectTo
+        //      = `${origin}/trial?token=<verify_token>&slug=${s.slug}`
+        //   -> insert a pending `workspaces` row (name, slug, owner)
+        //   -> send verification email
+        return new Promise(function (res) { setTimeout(res, 1000); });
+      }
+      function apiResend(s) {
+        // TODO(backend): POST /api/trial/resend -> supabase.auth.resend(...)
+        return new Promise(function (res) { setTimeout(res, 400); });
+      }
+      function apiProvision(s) {
+        // TODO(backend): POST /api/trial/provision
+        //   -> claim a pre-warmed tenant from the pool
+        //   -> map `${s.slug}.rezolveit.app` on Vercel (wildcard domain already
+        //      on the project, so this is instant; otherwise Domains API add)
+        //   -> seed sample tickets + KB, assign owner, return the ready URL
+        return new Promise(function (res) { setTimeout(res, 1500); });
+      }
+
+      syncSlug();
+      validate();
+
+      // ---- entry: email-link return (?token=...) jumps straight to provisioning ----
+      // Runs last so the URL-derived slug wins over the empty-form default.
+      (function initFromUrl() {
+        var params = new URLSearchParams(window.location.search);
+        var slugParam = params.get("slug");
+        if (slugParam) { state.slug = slugify(slugParam); $("trSlug").textContent = state.slug; }
+        // TODO(backend): verify `token` server-side before provisioning.
+        if (params.get("token") || params.get("verified") === "1") {
+          state.name = params.get("name") || "there";
+          goto("provision");
+        }
+      })();
+    })();
+  </script>
+</Base>
