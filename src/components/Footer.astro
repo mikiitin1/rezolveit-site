@@ -2,6 +2,9 @@
 // Footer box + cookie consent banner, shared by every page.
 import {
   modules,
+  navLabels,
+  platformFeatures,
+  platformAnchorHref,
   companyLinks,
   legalLinks,
   footerBlurb,
@@ -50,11 +53,22 @@ const home = homeHref(lang);
       </div>
 
       <div class="rz-footer-col">
-        <div class="rz-footer-heading">{lang === "he" ? "פלטפורמה" : "Platform"}</div>
+        <div class="rz-footer-heading">{t(navLabels.solutions, lang)}</div>
         {
           modules.map((m) => (
             <a href={localePath(m.path, lang)} class="rz-footer-link">
               {m.footerLabel}
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="rz-footer-col">
+        <div class="rz-footer-heading">{t(navLabels.platform, lang)}</div>
+        {
+          platformFeatures.map((f) => (
+            <a href={platformAnchorHref(lang)} class="rz-footer-link">
+              {t(f.title, lang)}
             </a>
           ))
         }
@@ -128,11 +142,11 @@ const home = homeHref(lang);
   .rz-footer-cols {
     display: flex;
     flex-wrap: wrap;
-    gap: 56px;
+    gap: 40px;
     justify-content: space-between;
   }
   .rz-footer-brand {
-    max-width: 300px;
+    max-width: 260px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -187,10 +201,10 @@ const home = homeHref(lang);
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-width: 150px;
+    min-width: 140px;
   }
   .rz-footer-col--wide {
-    min-width: 180px;
+    min-width: 150px;
   }
   .rz-footer-heading {
     font-size: 12.5px;
