@@ -2,15 +2,18 @@
 // Self-serve trial signup + instant (pre-warmed) provisioning.
 // Flow: Create account -> Verify email -> Provision tenant -> Workspace ready.
 //
-// This page is the UI/flow. The three server touch-points are marked with
-// `TODO(backend)` in the inline script:
-//   1. apiSignup()   -> Supabase Auth signUp + create pending workspace row
-//   2. apiProvision() -> claim a pre-warmed tenant, map <slug>.rezolveit.app
-//                        on Vercel (wildcard domain), seed sample data
-//   3. apiResend()    -> resend the verification email
-// The email link should return the user to /trial?token=<verify_token>, which
-// this page detects on load and advances straight to provisioning.
+// This page is the UI/flow, wired to the shared Supabase pool project:
+//   apiSignup()    -> POST /auth/v1/signup (GoTrue)
+//   apiResend()    -> POST /auth/v1/resend
+//   verify return  -> POST /auth/v1/verify (token_hash) -> access token
+//   apiProvision() -> POST /rest/v1/rpc/provision_trial_tenant (migration 0075),
+//                     under the verified user's token; creates tenant + owner.
+// When PUBLIC_SUPABASE_URL / _ANON_KEY are unset the page runs in DEMO mode
+// (simulated), so it's safe to ship before the backend env is configured.
 import Base from "../layouts/Base.astro";
+
+const SB_URL = import.meta.env.PUBLIC_SUPABASE_URL ?? "";
+const SB_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "";
 ---
 
 <Base
@@ -130,6 +133,7 @@ import Base from "../layouts/Base.astro";
             <div class="tr-prov-step" data-step="2"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><div class="main"><div>Seeding sample tickets &amp; knowledge base</div><div class="sub">So you have something to explore</div></div></div>
             <div class="tr-prov-step" data-step="3"><span class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><div class="main"><div>Finalizing secure access</div><div class="sub">Signing you in as owner</div></div></div>
           </div>
+          <p class="tr-err" id="trProvErr" style="margin-top: 14px;"></p>
         </div>
       </section>
 
@@ -302,10 +306,36 @@ import Base from "../layouts/Base.astro";
     }
   </style>
 
+  <script define:vars={{ SB_URL, SB_ANON }}>
+    window.__RZ_SB = { url: SB_URL, anon: SB_ANON };
+  </script>
+
   <script is:inline>
     (function () {
       var state = { email: "", workspace: "", slug: "your-team", name: "" };
       var $ = function (id) { return document.getElementById(id); };
+
+      // ---- Supabase (shared pool project) -----------------------------------
+      var SB = window.__RZ_SB || {};
+      var sbOn = !!(SB.url && SB.anon);
+      var sbBase = (SB.url || "").replace(/\/+$/, "");
+      var accessToken = null; // set after email verification (initFromUrl)
+      function sbFetch(path, opts) {
+        opts = opts || {};
+        var headers = { apikey: SB.anon, "Content-Type": "application/json" };
+        if (opts.token) headers["Authorization"] = "Bearer " + opts.token;
+        return fetch(sbBase + path, {
+          method: opts.method || "POST",
+          headers: headers,
+          body: opts.body ? JSON.stringify(opts.body) : undefined,
+        });
+      }
+      function sbError(r, fallback) {
+        return r.json().then(
+          function (e) { throw new Error((e && (e.msg || e.error_description || e.message || e.hint)) || fallback); },
+          function () { throw new Error(fallback); }
+        );
+      }
       var screens = { account: $("scAccount"), verify: $("scVerify"), provision: $("scProvision"), ready: $("scReady") };
       var stepIndexByScreen = { account: 0, verify: 1, provision: 2, ready: 2 };
 
@@ -393,18 +423,25 @@ import Base from "../layouts/Base.astro";
         var steps = [].slice.call(document.querySelectorAll("#trProvSteps .tr-prov-step"));
         steps.forEach(function (s) { s.classList.remove("done", "doing"); });
         var badge = steps[0].querySelector(".fast"); if (badge) badge.hidden = true;
+        $("trProvErr").textContent = "";
 
-        // TODO(backend): call apiProvision() and drive these ticks off real
-        // progress (SSE/websocket or polling). The timings below are the
-        // pre-warmed "instant" feel used while the request completes.
-        apiProvision(state);
+        // Kick off the real provision immediately; the ticks are the "instant"
+        // pre-warmed feel while it completes. Advance to Ready only once it
+        // resolves; surface an error instead of advancing on failure.
+        var provisioned = apiProvision(state).then(function (out) { return out || {}; });
         var timings = [[0, 500], [600, 650], [1300, 700], [2050, 600]];
         steps.forEach(function (step, n) {
           setTimeout(function () { step.classList.add("doing"); }, timings[n][0]);
           setTimeout(function () {
             step.classList.remove("doing"); step.classList.add("done");
             if (n === 0 && badge) badge.hidden = false;
-            if (n === steps.length - 1) setTimeout(function () { if (screens.provision.classList.contains("is-active")) goto("ready"); }, 700);
+            if (n === steps.length - 1) {
+              provisioned.then(function () {
+                if (screens.provision.classList.contains("is-active")) goto("ready");
+              }).catch(function (err) {
+                $("trProvErr").textContent = (err && err.message) || "Provisioning failed. Please try again.";
+              });
+            }
           }, timings[n][0] + timings[n][1]);
         });
       }
@@ -433,41 +470,84 @@ import Base from "../layouts/Base.astro";
       // ---------------- backend touch-points (stubbed) ----------------
       // Replace each with a real fetch to your API. They currently resolve
       // after a short delay so the flow is walkable before the backend exists.
+      // In DEMO mode (sbOn === false) these resolve after a short delay so the
+      // flow stays walkable before PUBLIC_SUPABASE_* is configured.
       function apiSignup(s) {
-        // TODO(backend): POST /api/trial/signup
-        //   -> supabase.auth.signUp({ email, password }) with emailRedirectTo
-        //      = `${origin}/trial?token=<verify_token>&slug=${s.slug}`
-        //   -> insert a pending `workspaces` row (name, slug, owner)
-        //   -> send verification email
-        return new Promise(function (res) { setTimeout(res, 1000); });
+        if (!sbOn) return new Promise(function (res) { setTimeout(res, 1000); });
+        // GoTrue signup. The confirmation email (Supabase dashboard template)
+        // returns the user to /trial?token_hash=...&type=signup ; the chosen
+        // workspace rides along in user metadata (workspace_slug).
+        return sbFetch("/auth/v1/signup", {
+          body: { email: s.email, password: s.password, data: { name: s.name, workspace_slug: s.slug } },
+        }).then(function (r) { if (!r.ok) return sbError(r, "Sign-up failed."); });
       }
       function apiResend(s) {
-        // TODO(backend): POST /api/trial/resend -> supabase.auth.resend(...)
-        return new Promise(function (res) { setTimeout(res, 400); });
+        if (!sbOn) return new Promise(function (res) { setTimeout(res, 400); });
+        return sbFetch("/auth/v1/resend", { body: { type: "signup", email: s.email } })
+          .then(function (r) { if (!r.ok) return sbError(r, "Could not resend."); });
       }
       function apiProvision(s) {
-        // TODO(backend): POST /api/trial/provision
-        //   -> claim a pre-warmed tenant from the pool
-        //   -> map `${s.slug}.rezolveit.app` on Vercel (wildcard domain already
-        //      on the project, so this is instant; otherwise Domains API add)
-        //   -> seed sample tickets + KB, assign owner, return the ready URL
-        return new Promise(function (res) { setTimeout(res, 1500); });
+        if (!sbOn) return new Promise(function (res) { setTimeout(res, 1500); });
+        // Atomic tenant creation under the verified user's token (migration 0075).
+        if (!accessToken) return Promise.reject(new Error("Email not verified yet."));
+        return sbFetch("/rest/v1/rpc/provision_trial_tenant", {
+          token: accessToken,
+          body: { p_slug: s.slug, p_name: s.workspace },
+        }).then(function (r) {
+          if (!r.ok) return sbError(r, "Provisioning failed.");
+          return r.json();
+        }).then(function (out) {
+          if (out && out.slug) { s.slug = out.slug; }
+          return out;
+        });
       }
 
       syncSlug();
       validate();
 
-      // ---- entry: email-link return (?token=...) jumps straight to provisioning ----
-      // Runs last so the URL-derived slug wins over the empty-form default.
+      // ---- entry: email-link return -> verify -> provision -------------------
+      // Supabase's confirmation link returns ?token_hash=...&type=signup. We
+      // exchange it for a session, recover the chosen workspace from user
+      // metadata, then provision. Demo mode still accepts ?token / ?verified=1.
+      // Runs last so a URL-derived slug wins over the empty-form default.
       (function initFromUrl() {
         var params = new URLSearchParams(window.location.search);
         var slugParam = params.get("slug");
         if (slugParam) { state.slug = slugify(slugParam); $("trSlug").textContent = state.slug; }
-        // TODO(backend): verify `token` server-side before provisioning.
-        if (params.get("token") || params.get("verified") === "1") {
-          state.name = params.get("name") || "there";
-          goto("provision");
+        state.name = params.get("name") || state.name || "there";
+        if (!state.workspace && state.slug !== "your-team") state.workspace = state.slug.replace(/-/g, " ");
+
+        var tokenHash = params.get("token_hash");
+        var type = params.get("type");
+        if (sbOn && tokenHash && (type === "signup" || type === "email")) {
+          sbFetch("/auth/v1/verify", { body: { type: "signup", token_hash: tokenHash } })
+            .then(function (r) { if (!r.ok) return sbError(r, "Verification link is invalid or expired."); return r.json(); })
+            .then(function (sess) {
+              accessToken = sess && sess.access_token;
+              if (!accessToken) throw new Error("Verification failed.");
+              // Recover the workspace slug from user metadata if the link lacked it.
+              if (slugParam) { goto("provision"); return; }
+              return sbFetch("/auth/v1/user", { method: "GET", token: accessToken })
+                .then(function (r) { return r.ok ? r.json() : null; })
+                .then(function (u) {
+                  var md = (u && (u.user_metadata || (u.user && u.user.user_metadata))) || {};
+                  if (md.workspace_slug) {
+                    state.slug = slugify(md.workspace_slug);
+                    $("trSlug").textContent = state.slug;
+                    state.workspace = state.slug.replace(/-/g, " ");
+                  }
+                  goto("provision");
+                });
+            })
+            .catch(function (err) {
+              goto("verify");
+              $("trResendState").textContent = "· " + ((err && err.message) || "Link invalid — resend below.");
+            });
+          return;
         }
+
+        // Demo fallback.
+        if (params.get("token") || params.get("verified") === "1") goto("provision");
       })();
     })();
   </script>
