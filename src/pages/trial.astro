@@ -360,15 +360,66 @@ const SB_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "";
       var email = $("trEmail"), workspace = $("trWorkspace"), password = $("trPassword"),
           terms = $("trTerms"), createBtn = $("trCreate");
       function emailValid(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+      // ---- work-email gating (email/password path only; SSO is exempt) ------
+      // Personal / free consumer mail providers. Kept in sync with the server
+      // blocklist in migration 0076_email_domain_blocklist.sql.
+      var FREE_EMAIL_DOMAINS = new Set([
+        "gmail.com", "googlemail.com", "outlook.com", "outlook.co.uk", "hotmail.com",
+        "hotmail.co.uk", "hotmail.fr", "hotmail.it", "live.com", "live.co.uk",
+        "msn.com", "icloud.com", "me.com", "mac.com", "yahoo.com",
+        "yahoo.co.uk", "yahoo.fr", "yahoo.co.in", "yahoo.de", "ymail.com",
+        "rocketmail.com", "aol.com", "proton.me", "protonmail.com", "pm.me",
+        "gmx.com", "gmx.de", "gmx.net", "gmx.at", "mail.com",
+        "zoho.com", "zohomail.com", "yandex.com", "yandex.ru", "qq.com",
+        "163.com", "126.com", "sina.com", "naver.com", "hey.com",
+        "fastmail.com", "tutanota.com", "tuta.com", "hushmail.com", "mailfence.com",
+        "comcast.net", "verizon.net", "att.net", "sbcglobal.net", "bellsouth.net",
+        "cox.net", "earthlink.net", "charter.net", "optonline.net", "frontier.com",
+        "btinternet.com", "sky.com", "virginmedia.com", "talktalk.net", "ntlworld.com",
+        "orange.fr", "wanadoo.fr", "laposte.net", "free.fr", "sfr.fr",
+        "web.de", "t-online.de", "freenet.de", "libero.it", "virgilio.it",
+        "tiscali.it", "rediffmail.com", "shaw.ca", "rogers.com", "aim.com"
+      ]);
+      // Disposable / throwaway mailbox providers.
+      var DISPOSABLE_EMAIL_DOMAINS = new Set([
+        "mailinator.com", "guerrillamail.com", "guerrillamail.info", "10minutemail.com",
+        "10minutemail.net", "temp-mail.org", "tempmail.com", "tempmail.net",
+        "throwaway.email", "yopmail.com", "yopmail.fr", "sharklasers.com",
+        "getnada.com", "nada.email", "trashmail.com", "dispostable.com",
+        "maildrop.cc", "mintemail.com", "moakt.com", "mohmal.com",
+        "fakeinbox.com", "mailnesia.com", "spam4.me", "grr.la",
+        "emailondeck.com", "discard.email", "mailcatch.com", "spamgourmet.com"
+      ]);
+      function emailDomain(v) {
+        var s = (v || "").toLowerCase().trim();
+        var at = s.lastIndexOf("@");
+        return at === -1 ? "" : s.slice(at + 1);
+      }
+      // Valid syntax AND not a personal/free or disposable domain.
+      function isBusinessEmail(v) {
+        if (!emailValid(v)) return false;
+        var d = emailDomain(v);
+        return !!d && !FREE_EMAIL_DOMAINS.has(d) && !DISPOSABLE_EMAIL_DOMAINS.has(d);
+      }
+
       function syncSlug() { state.slug = slugify(workspace.value); $("trSlug").textContent = state.slug; }
       function validate() {
-        var ok = emailValid(email.value) && workspace.value.trim().length > 1 && password.value.length >= 8 && terms.checked;
+        var ok = isBusinessEmail(email.value) && workspace.value.trim().length > 1 && password.value.length >= 8 && terms.checked;
         createBtn.disabled = !ok; return ok;
       }
       workspace.addEventListener("input", function () { syncSlug(); validate(); });
       email.addEventListener("input", function () {
-        if (email.value && !emailValid(email.value)) { $("trEmailHint").textContent = "Enter a valid work email"; $("trEmailHint").className = "tr-hint error"; email.classList.add("err"); }
-        else { $("trEmailHint").textContent = ""; $("trEmailHint").className = "tr-hint"; email.classList.remove("err"); }
+        var v = email.value;
+        if (v && !emailValid(v)) {
+          $("trEmailHint").textContent = "Enter a valid work email";
+          $("trEmailHint").className = "tr-hint error"; email.classList.add("err");
+        } else if (v && !isBusinessEmail(v)) {
+          $("trEmailHint").textContent = "Please use your work email — personal or temporary addresses aren't supported.";
+          $("trEmailHint").className = "tr-hint error"; email.classList.add("err");
+        } else {
+          $("trEmailHint").textContent = ""; $("trEmailHint").className = "tr-hint"; email.classList.remove("err");
+        }
         validate();
       });
       password.addEventListener("input", function () {
@@ -380,10 +431,33 @@ const SB_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "";
       });
       terms.addEventListener("change", validate);
 
+      // ---- SSO (Google / Microsoft) ----------------------------------------
+      // Deliberately NOT gated by the work-email rule: SSO signups are allowed
+      // from personal accounts. We only require a workspace name up front, then
+      // hand off to Supabase's OAuth authorize endpoint (implicit flow). The
+      // chosen workspace is stashed in localStorage so it survives the round-trip.
       [].forEach.call(document.querySelectorAll("[data-sso]"), function (btn) {
         btn.addEventListener("click", function () {
-          // TODO(backend): kick off OAuth with the chosen provider (Supabase signInWithOAuth).
-          $("trFormErr").textContent = "SSO with " + btn.getAttribute("data-sso") + " isn't wired up yet.";
+          var choice = btn.getAttribute("data-sso");
+          var provider = choice === "microsoft" ? "azure" : "google";
+          if (!workspace.value.trim()) {
+            workspace.focus();
+            $("trFormErr").textContent = "Enter a workspace name first";
+            return;
+          }
+          $("trFormErr").textContent = "";
+          syncSlug();
+          if (!sbOn) {
+            // DEMO mode: no real redirect, just a graceful message.
+            $("trFormErr").textContent = "SSO with " + choice + " will be available once the backend is connected. (Demo mode)";
+            return;
+          }
+          try {
+            localStorage.setItem("rz_trial_slug", state.slug);
+            localStorage.setItem("rz_trial_ws", workspace.value.trim());
+          } catch (e) {}
+          window.location.href = sbBase + "/auth/v1/authorize?provider=" + provider +
+            "&redirect_to=" + encodeURIComponent("https://rezolveit.io/trial");
         });
       });
 
@@ -516,6 +590,47 @@ const SB_ANON = import.meta.env.PUBLIC_SUPABASE_ANON_KEY ?? "";
         if (slugParam) { state.slug = slugify(slugParam); $("trSlug").textContent = state.slug; }
         state.name = params.get("name") || state.name || "there";
         if (!state.workspace && state.slug !== "your-team") state.workspace = state.slug.replace(/-/g, " ");
+
+        // ---- OAuth (Google/Microsoft) return: implicit flow -----------------
+        // Supabase returns the session in the URL hash, e.g.
+        //   #access_token=...&refresh_token=...&expires_in=...
+        // SSO users skip the email-verify screen and go straight to provision.
+        if (sbOn && window.location.hash && window.location.hash.indexOf("access_token") !== -1) {
+          var hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+          accessToken = hashParams.get("access_token");
+          // Strip the tokens from the address bar / history immediately.
+          try { history.replaceState(null, "", window.location.pathname + window.location.search); } catch (e) {}
+          if (accessToken) {
+            var savedSlug = null, savedWs = null;
+            try {
+              savedSlug = localStorage.getItem("rz_trial_slug");
+              savedWs = localStorage.getItem("rz_trial_ws");
+            } catch (e) {}
+            var finishSso = function (slug, ws) {
+              if (slug) { state.slug = slugify(slug); $("trSlug").textContent = state.slug; }
+              if (ws) state.workspace = ws;
+              else if (state.slug !== "your-team") state.workspace = state.slug.replace(/-/g, " ");
+              try { localStorage.removeItem("rz_trial_slug"); localStorage.removeItem("rz_trial_ws"); } catch (e) {}
+              goto("provision");
+            };
+            if (savedSlug) { finishSso(savedSlug, savedWs); return; }
+            // Fallback: recover the workspace slug from user metadata.
+            sbFetch("/auth/v1/user", { method: "GET", token: accessToken })
+              .then(function (r) { return r.ok ? r.json() : null; })
+              .then(function (u) {
+                var md = (u && (u.user_metadata || (u.user && u.user.user_metadata))) || {};
+                finishSso(md.workspace_slug || null, null);
+              })
+              .catch(function () { finishSso(null, null); });
+            return;
+          }
+        }
+        // Tolerate a ?code= PKCE return: we can't complete the exchange client
+        // side without the code verifier, so just clean it off the URL and fall
+        // through to the normal flow rather than erroring.
+        if (sbOn && params.get("code") && !accessToken) {
+          try { history.replaceState(null, "", window.location.pathname); } catch (e) {}
+        }
 
         var tokenHash = params.get("token_hash");
         var type = params.get("type");
